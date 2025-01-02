@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -11,8 +11,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from '@/components/Headers/Navbar';
 import { Link } from 'react-router-dom';
+import { verifyEmail } from '@/utils/verifyFormat';
+import { verifyFullName } from '@/utils/verifyFormat';
+import Loader from '@/components/Loaders/Loader';
+import { account } from '@/Appwrite/appwriteConfig';
 
 const Register: React.FC = () => {
+    const [name, setName] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [formatError, setFormatError] = useState<boolean>(false);
+
+    const handleSignUpBtn =async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setLoading(true);
+        const checkEmail: boolean = verifyEmail(email);
+        const checkFullName: boolean = verifyFullName(name);
+
+        if (!checkEmail || !checkFullName) {
+            setLoading(false);
+            setFormatError(true);
+        } else {
+            setLoading(false);
+            setFormatError(false);
+            
+        }
+    }
+
     return (
         <>
             <Navbar />
@@ -50,6 +75,8 @@ const Register: React.FC = () => {
                                                 <Label htmlFor="fullname" className='font-noto'>Full Name</Label>
                                                 <Input
                                                     type="text"
+                                                    value={name}
+                                                    onChange={(e) => setName(e.target.value)}
                                                     className='font-noto'
                                                     placeholder="Enter Your Full Name"
                                                     required
@@ -59,14 +86,25 @@ const Register: React.FC = () => {
                                                 <Label htmlFor="email" className='font-noto'>Email</Label>
                                                 <Input
                                                     type="email"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
                                                     className='font-noto'
                                                     placeholder="Enter Your Email Address"
                                                     required
                                                 />
                                             </div>
-                                            <Button className="w-full font-noto text-base font-medium" size="lg">
-                                                Sign Up
-                                            </Button>
+                                            {loading ? (
+                                                <div className='w-full flex items-center justify-center'>
+                                                    <Loader />
+                                                </div>
+                                            ) : (
+                                                <Button onClick={handleSignUpBtn} className="w-full font-noto text-base font-medium" size="lg">
+                                                    Sign Up
+                                                </Button>
+                                            )}
+                                            {formatError && (
+                                                <p className='text-center text-red-500 font-noto font-normal text-sm'>Name or email is invalid</p>
+                                            )}
                                         </div>
                                         <div className="text-center text-sm font-noto">
                                             Already have an account?{" "}
