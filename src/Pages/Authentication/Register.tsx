@@ -15,14 +15,19 @@ import { verifyEmail } from '@/utils/verifyFormat';
 import { verifyFullName } from '@/utils/verifyFormat';
 import Loader from '@/components/Loaders/Loader';
 import { account } from '@/Appwrite/appwriteConfig';
+import { ID } from 'appwrite';
+import OTPDrawer from '@/components/Drawers/OTPDrawer';
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
+    const [userId, setUserId] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [formatError, setFormatError] = useState<boolean>(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-    const handleSignUpBtn =async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSignUpBtn = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setLoading(true);
         const checkEmail: boolean = verifyEmail(email);
@@ -32,9 +37,20 @@ const Register: React.FC = () => {
             setLoading(false);
             setFormatError(true);
         } else {
-            setLoading(false);
+            setLoading(true);
             setFormatError(false);
-            
+
+            const user = await account.create(
+                ID.unique(),
+                email,
+                password,
+                name
+            );
+
+            const response = await account.createEmailToken(user.$id, email);
+            setUserId(response.userId);
+
+            setIsDrawerOpen(true);
         }
     }
 
@@ -72,7 +88,7 @@ const Register: React.FC = () => {
                                         </div>
                                         <div className="grid gap-5">
                                             <div className="grid gap-2">
-                                                <Label htmlFor="fullname" className='font-noto'>Full Name</Label>
+                                                <Label htmlFor="fullname" className='font-noto'>Full Name <span className='text-red-500'>*</span></Label>
                                                 <Input
                                                     type="text"
                                                     value={name}
@@ -83,7 +99,7 @@ const Register: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="grid gap-2">
-                                                <Label htmlFor="email" className='font-noto'>Email</Label>
+                                                <Label htmlFor="email" className='font-noto'>Email <span className='text-red-500'>*</span></Label>
                                                 <Input
                                                     type="email"
                                                     value={email}
@@ -92,6 +108,19 @@ const Register: React.FC = () => {
                                                     placeholder="Enter Your Email Address"
                                                     required
                                                 />
+                                            </div>
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="password" className='font-noto'>Password <span className='text-red-500'>*</span></Label>
+                                                <Input
+                                                    type="password"
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                    className='font-noto'
+                                                    placeholder="Create a Password"
+                                                    required
+                                                    minLength={8}
+                                                />
+                                                <Label htmlFor="password" className='font-noto font-light text-gray-900 dark:text-gray-200'>Password must have atleast 8 characters</Label>
                                             </div>
                                             {loading ? (
                                                 <div className='w-full flex items-center justify-center'>
@@ -118,6 +147,7 @@ const Register: React.FC = () => {
                         </Card>
                     </div>
                 </div>
+                <OTPDrawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} id={userId} />
             </div>
         </>
     )
