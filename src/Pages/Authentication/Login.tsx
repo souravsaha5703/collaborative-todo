@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,12 +7,58 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from '@/components/Headers/Navbar';
 import { Link } from 'react-router-dom';
+import { verifyEmail } from '@/utils/verifyFormat';
+import Loader from '@/components/Loaders/Loader';
+import OTPDrawer from '@/components/Drawers/OTPDrawer';
+import { account } from '@/Appwrite/appwriteConfig';
+import { ID } from 'appwrite';
 
 const Login: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [userId, setUserId] = useState<string>('');
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [formatError, setFormatError] = useState<boolean>(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+  const handleLoginBtn = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const checkEmail: boolean = verifyEmail(email);
+
+    if (!checkEmail) {
+      setLoading(false);
+      setFormatError(true);
+    } else {
+      setLoading(true);
+      setFormatError(false);
+
+      try {
+        const response = await account.createEmailToken(ID.unique(), email);
+        setUserId(response.userId);
+        setLoading(false);
+        setIsDrawerOpen(true);
+      } catch (error) {
+        setLoading(false);
+        setError(true);
+        console.error(error);
+      }
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -50,14 +96,25 @@ const Login: React.FC = () => {
                         <Label htmlFor="email" className='font-noto'>Email</Label>
                         <Input
                           type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           className='font-noto'
                           placeholder="Enter Your Email Address"
                           required
                         />
                       </div>
-                      <Button className="w-full font-noto text-base font-medium" size="lg">
-                        Login
-                      </Button>
+                      {loading ? (
+                        <div className='w-full flex items-center justify-center'>
+                          <Loader />
+                        </div>
+                      ) : (
+                        <Button onClick={handleLoginBtn} className="w-full font-noto text-base font-medium" size="lg">
+                          Login
+                        </Button>
+                      )}
+                      {formatError && (
+                        <p className='text-center text-red-500 font-noto font-normal text-sm'>Name or email is invalid</p>
+                      )}
                     </div>
                     <div className="text-center text-sm font-noto">
                       Don't have an account?{" "}
@@ -71,6 +128,24 @@ const Login: React.FC = () => {
             </Card>
           </div>
         </div>
+        <OTPDrawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} id={userId} />
+        <Dialog open={error} onOpenChange={setError}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Uh oh! Something went wrong.</DialogTitle>
+              <DialogDescription>
+                User is already registered
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="sm:justify-start">
+              <DialogClose asChild>
+                <Button type="button" variant="secondary">
+                  Close
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   )
