@@ -30,19 +30,23 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
     const handleVerifyBtn = async () => {
         setLoading(true);
 
-        await account.createSession(
-            id,
-            otp
-        ).then(() => {
-            setLoading(false);
-            setErrorOccur(false);
-            navigate('/todos');
+        try {
+            await account.createSession(
+                id,
+                otp
+            ).then(() => {
+                setLoading(false);
+                setErrorOccur(false);
+                navigate('/todos');
 
-        }).catch(error => {
-            setLoading(false);
-            setErrorOccur(true);
+            }).catch(error => {
+                setLoading(false);
+                setErrorOccur(true);
+                console.error(error);
+            })
+        } catch (error) {
             console.error(error);
-        })
+        }
     }
 
     return (
@@ -58,7 +62,9 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
                 </div>
                 <DrawerFooter>
                     {loading ? (
-                        <Loader />
+                        <div className='w-full flex items-center justify-center mt-2'>
+                            <Loader />
+                        </div>
                     ) : (
                         <Button onClick={handleVerifyBtn} className={`w-40 mt-2 font-noto font-medium text-base max-[375px]:text-base`} size="lg" >
                             Verify OTP

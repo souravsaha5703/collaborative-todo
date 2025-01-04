@@ -7,6 +7,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogClose,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from '@/components/Headers/Navbar';
@@ -23,6 +32,7 @@ const Register: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [userId, setUserId] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [formatError, setFormatError] = useState<boolean>(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -40,17 +50,23 @@ const Register: React.FC = () => {
             setLoading(true);
             setFormatError(false);
 
-            const user = await account.create(
-                ID.unique(),
-                email,
-                password,
-                name
-            );
+            try {
+                const user = await account.create(
+                    ID.unique(),
+                    email,
+                    password,
+                    name
+                );
 
-            const response = await account.createEmailToken(user.$id, email);
-            setUserId(response.userId);
-
-            setIsDrawerOpen(true);
+                const response = await account.createEmailToken(user.$id, email);
+                setUserId(response.userId);
+                setLoading(false);
+                setIsDrawerOpen(true);
+            } catch (error) {
+                setLoading(false);
+                setError(true);
+                console.error(error);
+            }
         }
     }
 
@@ -148,6 +164,23 @@ const Register: React.FC = () => {
                     </div>
                 </div>
                 <OTPDrawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} id={userId} />
+                <Dialog open={error} onOpenChange={setError}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Uh oh! Something went wrong.</DialogTitle>
+                            <DialogDescription>
+                                User is already registered
+                            </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter className="sm:justify-start">
+                            <DialogClose asChild>
+                                <Button type="button" variant="secondary">
+                                    Close
+                                </Button>
+                            </DialogClose>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     )
