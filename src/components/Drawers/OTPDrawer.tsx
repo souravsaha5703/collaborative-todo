@@ -37,7 +37,7 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
             ).then(() => {
                 setLoading(false);
                 setErrorOccur(false);
-                navigate('/todos');
+                navigate('/user/todos');
 
             }).catch(error => {
                 setLoading(false);

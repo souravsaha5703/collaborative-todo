@@ -3,6 +3,7 @@ import App from './App';
 import Register from './Pages/Authentication/Register';
 import Login from './Pages/Authentication/Login';
 import Todos from './Pages/Dashboard/Todos';
+import ProtectedRoutes from './ProtectedRoutes';
 
 const AppRouter = () => {
     return (
@@ -11,7 +12,9 @@ const AppRouter = () => {
                 <Route path='/' element={<App />}>
                     <Route path='' element={<Login />} />
                     <Route path='register' element={<Register />} />
-                    <Route path='todos' element={<Todos />} />
+                    <Route path='/user' element={<ProtectedRoutes />}>
+                        <Route path='todos' element={<Todos />} />
+                    </Route>
                 </Route>
             </Routes>
         </BrowserRouter>

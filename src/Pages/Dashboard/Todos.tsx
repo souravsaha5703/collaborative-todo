@@ -1,8 +1,10 @@
 import React from 'react';
+import { useAppSelector } from '../../hooks/redux-hooks';
 
 const Todos: React.FC = () => {
+    const user = useAppSelector((state) => state.user.currentUser);
     return (
-        <div>Todos</div>
+        <div>{user?.fullname}</div>
     )
 }
 
