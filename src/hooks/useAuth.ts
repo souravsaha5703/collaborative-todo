@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { account } from "@/Appwrite/appwriteConfig";
-import { User } from "@/utils/userInterface";
+import { User } from "@/utils/AppInterfaces";
 
 const useAuth = (): { user: User | null } => {
     const [user, setUser] = useState<User | null>(null);
