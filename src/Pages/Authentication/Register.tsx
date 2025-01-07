@@ -7,15 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogClose,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from '@/components/Headers/Navbar';
@@ -26,13 +17,16 @@ import Loader from '@/components/Loaders/Loader';
 import { account } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
 import OTPDrawer from '@/components/Drawers/OTPDrawer';
+import AlertDialog from '@/components/DialogBoxes/AlertDialog';
+import { AlertDialogError } from '@/utils/AppInterfaces';
 
 const Register: React.FC = () => {
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [userId, setUserId] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState<boolean>(false);
+    const [error, setError] = useState<AlertDialogError | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [formatError, setFormatError] = useState<boolean>(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
@@ -61,10 +55,23 @@ const Register: React.FC = () => {
                 const response = await account.createEmailToken(user.$id, email);
                 setUserId(response.userId);
                 setLoading(false);
+                setIsDialogOpen(false);
                 setIsDrawerOpen(true);
-            } catch (error) {
+            } catch (appWriteError: unknown) {
                 setLoading(false);
-                setError(true);
+                if (appWriteError instanceof Error) {
+                    setError({
+                        title: "Uh oh! Something went wrong.",
+                        description: appWriteError.message
+                    });
+                } else {
+                    setError({
+                        title: "Uh oh! Something went wrong.",
+                        description: "User is already registered"
+                    });
+                }
+
+                setIsDialogOpen(true);
                 console.error(error);
             }
         }
@@ -164,23 +171,7 @@ const Register: React.FC = () => {
                     </div>
                 </div>
                 <OTPDrawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} id={userId} />
-                <Dialog open={error} onOpenChange={setError}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Uh oh! Something went wrong.</DialogTitle>
-                            <DialogDescription>
-                                User is already registered
-                            </DialogDescription>
-                        </DialogHeader>
-                        <DialogFooter className="sm:justify-start">
-                            <DialogClose asChild>
-                                <Button type="button" variant="secondary">
-                                    Close
-                                </Button>
-                            </DialogClose>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <AlertDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} error={error} />
             </div>
         </>
     )
