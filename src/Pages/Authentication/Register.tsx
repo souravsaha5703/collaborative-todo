@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { verifyEmail } from '@/utils/verifyFormat';
 import { verifyFullName } from '@/utils/verifyFormat';
 import Loader from '@/components/Loaders/Loader';
-import { account } from '@/Appwrite/appwriteConfig';
+import { account, database } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
 import OTPDrawer from '@/components/Drawers/OTPDrawer';
 import AlertDialog from '@/components/DialogBoxes/AlertDialog';
@@ -51,6 +51,18 @@ const Register: React.FC = () => {
                     password,
                     name
                 );
+
+                await database.createDocument(
+                    import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                    import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
+                    user.$id,
+                    {
+                        fullname:user.name,
+                        status:user.status,
+                        email:user.email,
+                        emailVerification:user.emailVerification
+                    },
+                )
 
                 const response = await account.createEmailToken(user.$id, email);
                 setUserId(response.userId);

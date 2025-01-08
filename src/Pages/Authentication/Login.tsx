@@ -7,15 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogClose,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navbar from '@/components/Headers/Navbar';
@@ -23,16 +14,20 @@ import { Link } from 'react-router-dom';
 import { verifyEmail } from '@/utils/verifyFormat';
 import Loader from '@/components/Loaders/Loader';
 import OTPDrawer from '@/components/Drawers/OTPDrawer';
+import AlertDialog from '@/components/DialogBoxes/AlertDialog';
+import { AlertDialogError } from '@/utils/AppInterfaces';
 import { account } from '@/Appwrite/appwriteConfig';
-import { ID } from 'appwrite';
+import useCheckUser from '@/hooks/useCheckUser';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<AlertDialogError | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [formatError, setFormatError] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const { userExists, id } = useCheckUser(email);
 
   const handleLoginBtn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,13 +42,36 @@ const Login: React.FC = () => {
       setFormatError(false);
 
       try {
-        const response = await account.createEmailToken(ID.unique(), email);
-        setUserId(response.userId);
+
+        if (userExists == true) {
+          const response = await account.createEmailToken(id, email);
+          setUserId(response.userId);
+          setLoading(false);
+          setIsDialogOpen(false);
+          setIsDrawerOpen(true);
+        } else {
+          setLoading(false);
+          setError({
+            title: "Uh oh! Something went wrong.",
+            description: "User does not exists please register first"
+          });
+          setIsDialogOpen(true);
+        }
+
+      } catch (error: unknown) {
         setLoading(false);
-        setIsDrawerOpen(true);
-      } catch (error) {
-        setLoading(false);
-        setError(true);
+        if (error instanceof Error) {
+          setError({
+            title: "Uh oh! Something went wrong.",
+            description: error.message
+          });
+        } else {
+          setError({
+            title: "Uh oh! Something went wrong.",
+            description: "An unexpected error occurred."
+          });
+        }
+        setIsDialogOpen(true);
         console.error(error);
       }
     }
@@ -129,23 +147,7 @@ const Login: React.FC = () => {
           </div>
         </div>
         <OTPDrawer isDrawerOpen={isDrawerOpen} setIsDrawerOpen={setIsDrawerOpen} id={userId} />
-        <Dialog open={error} onOpenChange={setError}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Uh oh! Something went wrong.</DialogTitle>
-              <DialogDescription>
-                User is already registered
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className="sm:justify-start">
-              <DialogClose asChild>
-                <Button type="button" variant="secondary">
-                  Close
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <AlertDialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} error={error} />
       </div>
     </>
   )
