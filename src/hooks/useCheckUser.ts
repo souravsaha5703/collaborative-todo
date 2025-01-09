@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { database } from "@/Appwrite/appwriteConfig";
 import { Query } from "appwrite";
+import { verifyEmail } from "@/utils/verifyFormat";
 
 const useCheckUser = (email: string): { id: string, userExists: boolean } => {
     const [id, setId] = useState<string>('');
@@ -13,7 +14,7 @@ const useCheckUser = (email: string): { id: string, userExists: boolean } => {
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
                     [
-                        Query.equal('email',email),
+                        Query.equal('email', email),
                     ]
                 );
 
@@ -28,7 +29,10 @@ const useCheckUser = (email: string): { id: string, userExists: boolean } => {
             }
         }
 
-        findUser();
+        if (verifyEmail(email)) {
+            findUser();
+        }
+
     }, [email]);
 
     return { id, userExists }
