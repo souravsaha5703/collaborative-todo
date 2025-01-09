@@ -52,7 +52,7 @@ const Register: React.FC = () => {
                     name
                 );
 
-                await database.createDocument(
+                const userCollection = await database.createDocument(
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
                     user.$id,
@@ -64,7 +64,7 @@ const Register: React.FC = () => {
                     },
                 )
 
-                const response = await account.createEmailToken(user.$id, email);
+                const response = await account.createEmailToken(userCollection.$id, email);
                 setUserId(response.userId);
                 setLoading(false);
                 setIsDialogOpen(false);

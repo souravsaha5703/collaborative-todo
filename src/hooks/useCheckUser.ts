@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { database } from "@/Appwrite/appwriteConfig";
+import { Query } from "appwrite";
 
 const useCheckUser = (email: string): { id: string, userExists: boolean } => {
     const [id, setId] = useState<string>('');
@@ -11,7 +12,9 @@ const useCheckUser = (email: string): { id: string, userExists: boolean } => {
                 const response = await database.listDocuments(
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
-                    [`email=${email}`]
+                    [
+                        Query.equal('email',email),
+                    ]
                 );
 
                 if (response.documents.length > 0) {

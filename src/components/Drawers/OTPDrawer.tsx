@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import Loader from '../Loaders/Loader';
 import { account } from '@/Appwrite/appwriteConfig';
 import { useNavigate } from 'react-router-dom';
+import useCreateSession from '@/hooks/useCreateSession';
 
 interface DrawerProps {
     isDrawerOpen: boolean,
@@ -22,10 +23,12 @@ interface DrawerProps {
 
 const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id }) => {
     const [otp, setOtp] = useState<string>('');
+    const [userId, setUserId] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [errorOccur, setErrorOccur] = useState<boolean>(false);
 
     const navigate = useNavigate();
+    useCreateSession(userId);
 
     const handleVerifyBtn = async () => {
         setLoading(true);
@@ -34,7 +37,8 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
             await account.createSession(
                 id,
                 otp
-            ).then(() => {
+            ).then((res) => {
+                setUserId(res.userId);
                 setLoading(false);
                 setErrorOccur(false);
                 navigate('/user/todos');
