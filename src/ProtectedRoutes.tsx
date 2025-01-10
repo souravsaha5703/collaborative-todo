@@ -6,7 +6,7 @@ const ProtectedRoutes: React.FC = () => {
     const user = useAppSelector((state) => state.user.currentUser);
 
     if (user === null) {
-        return <Navigate to={'/'} replace />
+        return <Navigate to={'/login'} replace />
     } else {
         return <Outlet />
     }

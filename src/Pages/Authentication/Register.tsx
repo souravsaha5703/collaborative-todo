@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Navbar from '@/components/Headers/Navbar';
 import { Link } from 'react-router-dom';
 import { verifyEmail } from '@/utils/verifyFormat';
 import { verifyFullName } from '@/utils/verifyFormat';
@@ -57,10 +56,10 @@ const Register: React.FC = () => {
                     import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
                     user.$id,
                     {
-                        fullname:user.name,
-                        status:user.status,
-                        email:user.email,
-                        emailVerification:user.emailVerification
+                        fullname: user.name,
+                        status: user.status,
+                        email: user.email,
+                        emailVerification: user.emailVerification
                     },
                 )
 
@@ -91,7 +90,6 @@ const Register: React.FC = () => {
 
     return (
         <>
-            <Navbar />
             <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
                 <div className="flex w-full max-w-sm flex-col gap-6">
                     <div className="flex flex-col gap-6">
@@ -172,7 +170,7 @@ const Register: React.FC = () => {
                                         </div>
                                         <div className="text-center text-sm font-noto">
                                             Already have an account?{" "}
-                                            <Link to={"/"} className="underline underline-offset-4">
+                                            <Link to={"/login"} className="underline underline-offset-4">
                                                 Login
                                             </Link>
                                         </div>
