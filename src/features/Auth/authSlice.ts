@@ -4,11 +4,13 @@ import type { RootState } from '../../store/store';
 import { User } from '@/utils/AppInterfaces';
 
 interface ActiveUser {
-    currentUser: User | null
+    currentUser: User | null,
+    status: boolean
 }
 
 const initialState: ActiveUser = {
-    currentUser: null
+    currentUser: null,
+    status: false
 }
 
 export const authSlice = createSlice({
@@ -17,12 +19,15 @@ export const authSlice = createSlice({
     reducers: {
         addUser: (state, action: PayloadAction<User | null>) => {
             state.currentUser = action.payload
+        },
+        userStatus: (state, action: PayloadAction<boolean>) => {
+            state.status = action.payload
         }
     },
 })
 
-export const { addUser } = authSlice.actions;
+export const { addUser, userStatus } = authSlice.actions;
 
-export const selectUser = (state: RootState) => state.user.currentUser;
+export const selectUser = (state: RootState) => { state.user.currentUser, state.user.status };
 
 export default authSlice.reducer;

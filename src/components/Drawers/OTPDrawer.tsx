@@ -11,9 +11,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Loader from '../Loaders/Loader';
-import { account } from '@/Appwrite/appwriteConfig';
+import { account, database } from '@/Appwrite/appwriteConfig';
 import { useNavigate } from 'react-router-dom';
-import useCreateSession from '@/hooks/useCreateSession';
+import { useAppDispatch } from "../../hooks/redux-hooks";
+import { addUser, userStatus } from "@/features/Auth/authSlice";
 
 interface DrawerProps {
     isDrawerOpen: boolean,
@@ -23,12 +24,11 @@ interface DrawerProps {
 
 const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id }) => {
     const [otp, setOtp] = useState<string>('');
-    const [userId, setUserId] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [errorOccur, setErrorOccur] = useState<boolean>(false);
-
+    const [error, setError] = useState<string>('');
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    useCreateSession(userId);
 
     const handleVerifyBtn = async () => {
         setLoading(true);
@@ -37,18 +37,49 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
             await account.createSession(
                 id,
                 otp
-            ).then((res) => {
-                setUserId(res.userId);
+            ).then(async (res) => {
+                const response = await database.getDocument(
+                    import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                    import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
+                    res.userId
+                );
+
+                dispatch(addUser({
+                    id: response.$id,
+                    fullname: response.fullname,
+                    status: response.status,
+                    email: response.email,
+                    emailVerification: response.emailVerification
+                }));
+                dispatch(userStatus(true));
+
                 setLoading(false);
                 setErrorOccur(false);
+                setError('');
                 navigate('/user/todos');
 
-            }).catch(error => {
+            }).catch((error: unknown) => {
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Invalid OTP')
+                }
+                dispatch(addUser(null));
+                dispatch(userStatus(false));
                 setLoading(false);
                 setErrorOccur(true);
                 console.error(error);
             })
-        } catch (error) {
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('Invalid OTP')
+            }
+            dispatch(addUser(null));
+            dispatch(userStatus(false));
+            setLoading(false);
+            setErrorOccur(true);
             console.error(error);
         }
     }
@@ -62,7 +93,7 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
                 </DrawerHeader>
                 <div className="flex flex-col space-y-1.5">
                     <Input type="text" value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter otp here" className="h-12 font-noto font-medium text-base" maxLength={6} required />
-                    {errorOccur && <p className='text-center text-red-500 font-noto font-normal text-sm'>Invalid OTP</p>}
+                    {errorOccur && <p className='text-center text-red-500 font-noto font-normal text-sm'>{error}</p>}
                 </div>
                 <DrawerFooter>
                     {loading ? (
