@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import App from './App';
 import Register from './Pages/Authentication/Register';
 import Login from './Pages/Authentication/Login';
-import Todos from './Pages/Dashboard/Todos';
+import Dashboard from './Pages/Dashboard/Dashboard';
 import ProtectedRoutes from './ProtectedRoutes';
 import Page from './Pages/LandingPage/Page';
 
@@ -15,7 +15,7 @@ const AppRouter = () => {
                     <Route path='login' element={<Login />} />
                     <Route path='register' element={<Register />} />
                     <Route path='/user' element={<ProtectedRoutes />}>
-                        <Route path='todos' element={<Todos />} />
+                        <Route path='dashboard' element={<Dashboard />} />
                     </Route>
                 </Route>
             </Routes>

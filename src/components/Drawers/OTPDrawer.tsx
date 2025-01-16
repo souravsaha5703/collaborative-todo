@@ -56,7 +56,7 @@ const OTPDrawer: React.FC<DrawerProps> = ({ isDrawerOpen, setIsDrawerOpen, id })
                 setLoading(false);
                 setErrorOccur(false);
                 setError('');
-                navigate('/user/todos');
+                navigate('/user/dashboard');
 
             }).catch((error: unknown) => {
                 if (error instanceof Error) {

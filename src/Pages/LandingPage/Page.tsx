@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Headers/Navbar';
+import Navbar from '@/components/NavigationBars/Navbar';
 import { cn } from "@/lib/utils";
 import AnimatedGridPattern from "@/components/ui/animated-grid-pattern";
 import ShimmerButton from "@/components/ui/shimmer-button";
