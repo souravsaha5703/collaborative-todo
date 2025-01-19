@@ -5,6 +5,7 @@ import { ClipboardList } from 'lucide-react';
 import { ChartNoAxesCombined } from 'lucide-react';
 import { HeartHandshake } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { ModeToggle } from '../Theme/Mode-toggle';
 import { useAppSelector } from '../../hooks/redux-hooks';
 import {
     Tooltip,
@@ -66,6 +67,7 @@ const Sidebar: React.FC = () => {
                     </TooltipProvider>
 
                 </div>
+                <ModeToggle />
             </div>
         </nav>
     )
