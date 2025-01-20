@@ -25,6 +25,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import TaskTags from '../Tags/TaskTags';
+import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
+import { removeAllTags } from '@/features/Tags/tagSlice';
+import { database } from '@/Appwrite/appwriteConfig';
+import { ID } from 'appwrite';
+import Loader from '../Loaders/Loader';
 
 interface TodoDialogProps {
     isDialogOpen: boolean,
@@ -33,6 +38,59 @@ interface TodoDialogProps {
 
 const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }) => {
     const [date, setDate] = useState<Date>();
+    const [task, setTask] = useState<string>('');
+    const [taskPriority, setTaskPriority] = useState<string>('None');
+    const [errorOccur, setErrorOccur] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
+    const user = useAppSelector((state) => state.user.currentUser);
+    const tags = useAppSelector((state) => state.tag.tags);
+
+    const handlePriority = (value: string) => {
+        setTaskPriority(value);
+    }
+
+    const handleNewTaskBtn = async () => {
+        if (task !== '') {
+            setErrorOccur(false);
+            setLoading(true);
+            if (date !== undefined) {
+                setErrorOccur(false);
+                setLoading(true);
+                try {
+                    await database.createDocument(
+                        import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                        import.meta.env.VITE_APPWRITE_TODOS_COLLECTION_ID,
+                        ID.unique(), {
+                        task: task,
+                        completion_date: date,
+                        priority: taskPriority,
+                        tags: tags,
+                        task_status: false,
+                        createdBy: user?.id
+                    }
+                    );
+                    setTask('');
+                    setDate(undefined);
+                    dispatch(removeAllTags());
+                    setIsDialogOpen(false);
+                } catch (error) {
+                    console.error(error);
+                    setLoading(false);
+                }
+                setLoading(false);
+            } else {
+                setErrorOccur(true);
+                setError("Please choose task completion date");
+                setLoading(false);
+            }
+        } else {
+            setErrorOccur(true);
+            setError("Please enter a task to add");
+            setLoading(false);
+        }
+    }
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -43,8 +101,11 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                         <div className='py-4 w-full px-1 flex flex-col gap-2'>
                             <Input
                                 type='text'
+                                value={task}
+                                onChange={(e) => setTask(e.target.value)}
                                 placeholder='Enter Your Task'
                                 className='font-noto text-base font-medium'
+                                required
                             />
                             <div className='w-full flex gap-2'>
                                 <Popover>
@@ -84,7 +145,7 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                                         </div>
                                     </PopoverContent>
                                 </Popover>
-                                <Select>
+                                <Select onValueChange={handlePriority}>
                                     <SelectTrigger className="w-[120px]">
                                         <SelectValue placeholder="Priority" />
                                     </SelectTrigger>
@@ -96,7 +157,14 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                                 </Select>
                             </div>
                             <TaskTags />
-                            <Button variant={"default"} size={"lg"} className='font-noto text-base font-medium text-center w-36'>Add Task</Button>
+                            {errorOccur && <p className='font-noto text-start font-normal text-base text-red-500'>{error}</p>}
+                            {loading ? (
+                                <div className='mt-4 w-36 flex items-center justify-center'>
+                                    <Loader />
+                                </div>
+                            ) : (
+                                <Button onClick={handleNewTaskBtn} variant={"default"} size={"lg"} className='font-noto text-base font-medium text-center w-36'>Add Task</Button>
+                            )}
                         </div>
                     </DialogDescription>
                 </DialogHeader>
