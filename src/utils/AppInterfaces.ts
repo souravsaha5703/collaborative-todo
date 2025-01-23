@@ -1,4 +1,4 @@
-export interface User{
+export interface User {
     id: string,
     fullname: string,
     status: boolean,
@@ -6,7 +6,17 @@ export interface User{
     emailVerification: boolean,
 }
 
-export interface AlertDialogError{
+export interface AlertDialogError {
     title: string,
     description: string
 }
+
+export interface Todos {
+    id: string,
+    task: string,
+    priority: string,
+    tags: string[],
+    task_status: boolean,
+    createdBy: string | undefined,
+    completion_date: string
+} 

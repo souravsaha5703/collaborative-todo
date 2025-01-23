@@ -27,9 +27,11 @@ import {
 import TaskTags from '../Tags/TaskTags';
 import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
 import { removeAllTags } from '@/features/Tags/tagSlice';
+import { addTodo } from '@/features/Todo/todoSlice';
 import { database } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
 import Loader from '../Loaders/Loader';
+import { formatToIndianTime } from '@/utils/dateFormatter';
 
 interface TodoDialogProps {
     isDialogOpen: boolean,
@@ -59,7 +61,7 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                 setErrorOccur(false);
                 setLoading(true);
                 try {
-                    await database.createDocument(
+                    const createTodo = await database.createDocument(
                         import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                         import.meta.env.VITE_APPWRITE_TODOS_COLLECTION_ID,
                         ID.unique(), {
@@ -71,8 +73,18 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                         createdBy: user?.id
                     }
                     );
+                    dispatch(addTodo({
+                        id: createTodo.$id,
+                        task: task,
+                        priority: taskPriority,
+                        tags: tags,
+                        task_status: false,
+                        createdBy: user?.id,
+                        completion_date: formatToIndianTime(date)
+                    }));
                     setTask('');
                     setDate(undefined);
+                    setTaskPriority('None');
                     dispatch(removeAllTags());
                     setIsDialogOpen(false);
                 } catch (error) {
