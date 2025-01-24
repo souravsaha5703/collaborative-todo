@@ -106,9 +106,9 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
+            <DialogContent className='max-[528px]:w-[400px] max-[425px]:w-[300px]'>
                 <DialogHeader>
-                    <DialogTitle className='font-noto font-medium'>Add New Task</DialogTitle>
+                    <DialogTitle className='font-noto font-medium text-start'>Add New Task</DialogTitle>
                     <DialogDescription asChild>
                         <div className='py-4 w-full px-1 flex flex-col gap-2'>
                             <Input
@@ -116,17 +116,17 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                                 value={task}
                                 onChange={(e) => setTask(e.target.value)}
                                 placeholder='Enter Your Task'
-                                className='font-noto text-base font-medium'
+                                className='font-noto text-base font-medium max-[425px]:w-full max-[425px]:text-sm'
                                 required
                             />
-                            <div className='w-full flex gap-2'>
+                            <div className='w-full flex gap-2 max-[425px]:flex-col'>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
                                             variant={"outline"}
                                             className={cn(
                                                 "w-[200px] justify-start text-left font-noto font-normal",
-                                                !date && "text-muted-foreground"
+                                                !date && "text-muted-foreground max-[425px]:w-full"
                                             )}
                                         >
                                             <CalendarIcon />
@@ -158,7 +158,7 @@ const TodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialogOpen }
                                     </PopoverContent>
                                 </Popover>
                                 <Select onValueChange={handlePriority}>
-                                    <SelectTrigger className="w-[120px]">
+                                    <SelectTrigger className="w-[120px] max-[425px]:w-full font-noto">
                                         <SelectValue placeholder="Priority" />
                                     </SelectTrigger>
                                     <SelectContent>

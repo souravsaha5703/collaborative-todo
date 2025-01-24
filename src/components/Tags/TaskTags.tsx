@@ -38,7 +38,7 @@ const TaskTags: React.FC = () => {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={addTags}
-                className="font-noto font-normal"
+                className="font-noto font-normal max-[425px]:text-sm"
             />
             <div className='flex flex-wrap gap-2'>
                 {tags.map((tag, index) => {
