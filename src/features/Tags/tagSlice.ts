@@ -17,6 +17,9 @@ export const tagSlice = createSlice({
         addTag: (state, action: PayloadAction<string>) => {
             state.tags.push(action.payload);
         },
+        addAllTags: (state, action: PayloadAction<string[]>) => {
+            state.tags = action.payload
+        },
         removeTag: (state, action: PayloadAction<string>) => {
             const filterTag = state.tags.filter(tag => tag !== action.payload);
             state.tags = filterTag;
@@ -27,7 +30,7 @@ export const tagSlice = createSlice({
     }
 });
 
-export const { addTag, removeTag, removeAllTags } = tagSlice.actions;
+export const { addTag, removeTag, removeAllTags, addAllTags } = tagSlice.actions;
 
 export const selectTag = (state: RootState) => state.tag.tags;
 

@@ -38,7 +38,7 @@ const Sidebar: React.FC = () => {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <NavLink to={'/user/dashboard'} className={"text-gray-600 dark:text-gray-100 hover:bg-orange-500 hover:text-gray-100 hover:dark:slate-gray-50 p-2 rounded-md"}><ClipboardList className='size-6 md:size-7' /></NavLink>
+                                <NavLink to={'/user/all_todos'} className={"text-gray-600 dark:text-gray-100 hover:bg-orange-500 hover:text-gray-100 hover:dark:slate-gray-50 p-2 rounded-md"}><ClipboardList className='size-6 md:size-7' /></NavLink>
                             </TooltipTrigger>
                             <TooltipContent side='right' align='end' sideOffset={10} alignOffset={5} className='font-noto font-normal'>
                                 <p>Tasks</p>
