@@ -27,7 +27,7 @@ import {
 import UpdateTaskTags from '../Tags/UpdateTaskTags';
 import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
 import { removeAllTags } from '@/features/Tags/tagSlice';
-import { addTodo } from '@/features/Todo/todoSlice';
+import { updateTodo } from '@/features/Todo/todoSlice';
 import { database } from '@/Appwrite/appwriteConfig';
 import Loader from '../Loaders/Loader';
 import { formatToIndianTime } from '@/utils/dateFormatter';
@@ -74,7 +74,7 @@ const TodoUpdateDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialog
             setErrorOccur(false);
             setLoading(true);
             try {
-                const updateTodo = await database.updateDocument(
+                const updatedTodo = await database.updateDocument(
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_TODOS_COLLECTION_ID,
                     id, {
@@ -86,14 +86,14 @@ const TodoUpdateDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDialog
                     createdBy: createdBy
                 }
                 );
-                dispatch(addTodo({
-                    id: updateTodo.$id,
-                    task: updateTodo.task,
-                    priority: updateTodo.priority,
+                dispatch(updateTodo({
+                    id: updatedTodo.$id,
+                    task: updatedTodo.task,
+                    priority: updatedTodo.priority,
                     tags: tags,
                     task_status: false,
                     createdBy: createdBy,
-                    completion_date: formatToIndianTime(updateTodo.completion_date)
+                    completion_date: formatToIndianTime(updatedTodo.completion_date)
                 }));
                 setTask('');
                 setDate(undefined);

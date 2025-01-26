@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/NavigationBars/Sidebar';
 import useGetTodos from '@/hooks/useGetTodos';
-import { useAppSelector } from '@/hooks/redux-hooks';
+import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
 import TodoUpdateDialog from '@/components/DialogBoxes/TodoUpdateDialog';
 import Todos from '@/components/TodoCards/Todos';
 import { cardBgColorGenerator } from '@/utils/cardBgColorGenerator';
 import noTodoPic from '@/assets/images/no todo pic.png';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import Loader from '@/components/Loaders/Loader';
+import { database } from '@/Appwrite/appwriteConfig';
+import { updateTodoStatus } from '@/features/Todo/todoSlice';
 
 const AllTodos: React.FC = () => {
     const [isTodoDialogOpen, setIsTodoDialogOpen] = useState<boolean>(false);
@@ -23,6 +25,7 @@ const AllTodos: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     useGetTodos();
     const todos = useAppSelector((state) => state.todo.todos);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         setTimeout(() => {
@@ -30,9 +33,11 @@ const AllTodos: React.FC = () => {
         }, 2000)
     }, []);
 
+    const filteredTodos = todos.filter(todo => todo.task_status !== true);
+
     const completedTasks = todos.filter(todo => todo.task_status == true);
 
-    const handleTodoClick = (todo: TodoInterface) => {
+    const handleEditTodoClick = (todo: TodoInterface) => {
         setDialogData({
             id: todo.id,
             task: todo.task,
@@ -45,8 +50,15 @@ const AllTodos: React.FC = () => {
         setIsTodoDialogOpen(true);
     }
 
-    const handleCompletedTodoClick = () => {
-
+    const handleCompleteTodoClick = async (id: string) => {
+        await database.updateDocument(
+            import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+            import.meta.env.VITE_APPWRITE_TODOS_COLLECTION_ID,
+            id, {
+            task_status: true,
+        }
+        );
+        dispatch(updateTodoStatus(id));
     }
 
     return (
@@ -61,8 +73,8 @@ const AllTodos: React.FC = () => {
                         </div>
                     ) : (
                         <div className='w-full py-5 px-1 flex flex-wrap gap-5 items-center max-[950px]:justify-center'>
-                            {todos.length > 0 ? (
-                                todos.map((todo, index) => {
+                            {filteredTodos.length > 0 ? (
+                                filteredTodos.map((todo, index) => {
                                     const color = cardBgColorGenerator();
                                     return (
                                         <Todos
@@ -71,7 +83,8 @@ const AllTodos: React.FC = () => {
                                             priority={todo.priority}
                                             completion_date={todo.completion_date}
                                             color={color}
-                                            onclick={() => handleTodoClick(todo)}
+                                            onEditClick={() => handleEditTodoClick(todo)}
+                                            onCompleteClick={() => handleCompleteTodoClick(todo.id)}
                                         />
                                     )
                                 })
@@ -99,7 +112,6 @@ const AllTodos: React.FC = () => {
                                             priority={todo.priority}
                                             completion_date={todo.completion_date}
                                             color={"bg-slate-200"}
-                                            onclick={() => handleCompletedTodoClick()}
                                         />
                                     )
                                 })

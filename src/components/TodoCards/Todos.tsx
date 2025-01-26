@@ -4,19 +4,20 @@ import {
     CardContent,
     CardHeader,
 } from "@/components/ui/card";
-import { Star } from "lucide-react";
+import { Star, FilePenLine, ClipboardCheck } from "lucide-react";
 
 interface TodoCardProps {
     task: string,
     priority: string,
     completion_date: string,
     color?: string,
-    onclick: React.MouseEventHandler<HTMLDivElement>
+    onEditClick?: React.MouseEventHandler<SVGSVGElement>
+    onCompleteClick?: React.MouseEventHandler<SVGSVGElement>
 }
 
-const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color, onclick }) => {
+const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color, onEditClick, onCompleteClick }) => {
     return (
-        <Card className={`w-64 h-40 ${color} overflow-hidden border-0 cursor-pointer rounded-2xl max-[425px]:h-36`} onClick={onclick}>
+        <Card className={`w-64 h-40 ${color} overflow-hidden border-0 rounded-2xl`} >
             <CardHeader className="pb-0 pt-4 px-4">
                 <div className="flex items-center gap-2">
                     <span className='font-noto text-base font-normal text-gray-950'>
@@ -32,8 +33,12 @@ const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color
                 </div>
             </CardHeader>
             <CardContent className="pt-3 px-4 pb-4">
-                <h3 className="text-2xl font-noto text-start font-medium mb-3 text-gray-950 truncate">{task}</h3>
-                <p className="text-base font-normal font-noto text-gray-800 mb-3">{completion_date}</p>
+                <h3 className="text-2xl font-noto text-start font-medium mb-2 text-gray-950 truncate">{task}</h3>
+                <p className="text-base font-normal font-noto text-gray-800 mb-2">{completion_date}</p>
+                <div className='w-full flex items-center justify-end gap-2'>
+                    <FilePenLine onClick={onEditClick} className='text-[#FF8A65] text-sm cursor-pointer' />
+                    <ClipboardCheck onClick={onCompleteClick} className='text-[#FF8A65] text-sm cursor-pointer' />
+                </div>
             </CardContent>
         </Card>
     )

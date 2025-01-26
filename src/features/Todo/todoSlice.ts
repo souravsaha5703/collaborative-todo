@@ -20,11 +20,33 @@ export const todoSlice = createSlice({
         },
         addAllTodos: (state, action: PayloadAction<Todos[]>) => {
             state.todos = action.payload;
+        },
+        updateTodo: (state, action: PayloadAction<Todos>) => {
+            const updatedTodo = state.todos.map(todo => todo.id === action.payload.id
+                ? {
+                    ...todo, task: action.payload.task,
+                    task_status: action.payload.task_status,
+                    tags: action.payload.tags,
+                    priority: action.payload.priority,
+                    completion_date: action.payload.completion_date
+                }
+                : todo
+            );
+            state.todos = updatedTodo;
+        },
+        updateTodoStatus: (state, action: PayloadAction<string>) => {
+            const updatedTodo = state.todos.map(todo => todo.id === action.payload
+                ? {
+                    ...todo, task_status: true
+                }
+                : todo
+            );
+            state.todos = updatedTodo;
         }
     }
 });
 
-export const { addTodo,addAllTodos } = todoSlice.actions;
+export const { addTodo, addAllTodos, updateTodo, updateTodoStatus } = todoSlice.actions;
 
 export const selectTodos = (state: RootState) => state.todo.todos;
 
