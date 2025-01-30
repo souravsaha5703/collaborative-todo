@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../../store/store';
 import { Todos } from '@/utils/AppInterfaces';
+import { formatToIndianTime } from '@/utils/dateFormatter';
 
 interface Todo {
     todos: Todos[]
@@ -37,7 +38,8 @@ export const todoSlice = createSlice({
         updateTodoStatus: (state, action: PayloadAction<string>) => {
             const updatedTodo = state.todos.map(todo => todo.id === action.payload
                 ? {
-                    ...todo, task_status: true
+                    ...todo, task_status: true,
+                    task_completed_date: formatToIndianTime(new Date())
                 }
                 : todo
             );

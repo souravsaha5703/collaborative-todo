@@ -32,7 +32,8 @@ const useGetTodos = () => {
                         tags: todo.tags,
                         task_status: todo.task_status,
                         createdBy: todo.createdBy.$id,
-                        completion_date: formatToIndianTime(todo.completion_date)
+                        completion_date: formatToIndianTime(todo.completion_date),
+                        task_completed_date: todo.task_completed_date
                     });
                 });
 

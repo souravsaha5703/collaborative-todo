@@ -4,6 +4,7 @@ import Register from './Pages/Authentication/Register';
 import Login from './Pages/Authentication/Login';
 import Dashboard from './Pages/Main/Dashboard';
 import AllTodos from './Pages/Main/AllTodos';
+import TodoAnalytics from './Pages/Main/TodoAnalytics';
 import ProtectedRoutes from './ProtectedRoutes';
 import Page from './Pages/LandingPage/Page';
 
@@ -18,6 +19,7 @@ const AppRouter = () => {
                     <Route path='/user' element={<ProtectedRoutes />}>
                         <Route path='dashboard' element={<Dashboard />} />
                         <Route path='all_todos' element={<AllTodos />} />
+                        <Route path='analytics' element={<TodoAnalytics />} />
                     </Route>
                 </Route>
             </Routes>

@@ -56,6 +56,7 @@ const AllTodos: React.FC = () => {
             import.meta.env.VITE_APPWRITE_TODOS_COLLECTION_ID,
             id, {
             task_status: true,
+            task_completed_date: new Date()
         }
         );
         dispatch(updateTodoStatus(id));
