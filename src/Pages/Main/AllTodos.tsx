@@ -186,6 +186,7 @@ const AllTodos: React.FC = () => {
                                             priority={todo.priority}
                                             completion_date={todo.completion_date}
                                             color={"bg-slate-200"}
+                                            taskCompletedDate={todo.task_completed_date}
                                         />
                                     )
                                 })

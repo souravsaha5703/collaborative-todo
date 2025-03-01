@@ -1,4 +1,4 @@
-export const formatToIndianTime = (dateString: Date) => {
+export const formatToIndianTime = (dateString: Date | string) => {
     const date = new Date(dateString);
 
     const options: Intl.DateTimeFormatOptions = {
