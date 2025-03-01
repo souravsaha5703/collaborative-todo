@@ -13,9 +13,16 @@ import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import Loader from '@/components/Loaders/Loader';
 import { database } from '@/Appwrite/appwriteConfig';
 import { updateTodoStatus } from '@/features/Todo/todoSlice';
+import TodoCardDialog from '@/components/DialogBoxes/TodoCardDialog';
+
+interface CardDialogInterface {
+    task: string,
+    color: string
+}
 
 const Dashboard: React.FC = () => {
     const [isTodoDialogOpen, setIsTodoDialogOpen] = useState<boolean>(false);
+    const [isTodoCardDialogOpen, setIsTodoCardDialogOpen] = useState<boolean>(false);
     const [isUpdateTodoDialogOpen, setIsUpdateTodoDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const [dialogData, setDialogData] = useState<TodoInterface>({
@@ -26,6 +33,10 @@ const Dashboard: React.FC = () => {
         priority: '',
         createdBy: '',
         tags: []
+    });
+    const [cardDialogData, setCardDialogData] = useState<CardDialogInterface>({
+        task: '',
+        color: ''
     });
     const todos = useAppSelector((state) => state.todo.todos);
     useGetTodos();
@@ -50,9 +61,9 @@ const Dashboard: React.FC = () => {
         )
     });
 
-    const filteredTodos = matchingDates.filter(todo => todo.task_status !== true);
+    const filteredTodos: TodoInterface[] = matchingDates.filter(todo => todo.task_status !== true);
 
-    const completedTasks = matchingDates.filter(todo => todo.task_status == true);
+    const completedTasks: TodoInterface[] = matchingDates.filter(todo => todo.task_status == true);
 
     const handleAddTaskBtn = () => {
         setIsTodoDialogOpen(true);
@@ -83,6 +94,14 @@ const Dashboard: React.FC = () => {
         dispatch(updateTodoStatus(id));
     }
 
+    const handleTodoCardClick = (task: string, color: string) => {
+        setCardDialogData({
+            task: task,
+            color: color
+        });
+        setIsTodoCardDialogOpen(true);
+    }
+
     return (
         <>
             <Sidebar />
@@ -109,6 +128,7 @@ const Dashboard: React.FC = () => {
                                             color={color}
                                             onEditClick={() => handleEditTodoClick(todo)}
                                             onCompleteClick={() => handleCompleteTodoClick(todo.id)}
+                                            onCardClick={() => handleTodoCardClick(todo.task, color)}
                                         />
                                     )
                                 })
@@ -122,7 +142,7 @@ const Dashboard: React.FC = () => {
                     )
                     }
 
-                    <h2 className='font-noto text-3xl font-normal text-start mt-4 text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Completed Tasks</h2>
+                    <h2 className='font-noto text-3xl font-normal text-start mt-4 text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Today's Completed Tasks</h2>
                     {loading ? (
                         <div className='w-full py-5 px-1 flex items-center justify-center'>
                             <Loader />
@@ -151,6 +171,7 @@ const Dashboard: React.FC = () => {
                     )}
                 </div>
                 <TodoDialog isDialogOpen={isTodoDialogOpen} setIsDialogOpen={setIsTodoDialogOpen} />
+                <TodoCardDialog isDialogOpen={isTodoCardDialogOpen} setIsDialogOpen={setIsTodoCardDialogOpen} task={cardDialogData.task} color={cardDialogData.color} />
                 <TodoUpdateDialog isDialogOpen={isUpdateTodoDialogOpen} setIsDialogOpen={setIsUpdateTodoDialogOpen} id={dialogData.id} selectedTask={dialogData.task} completion_date={dialogData.completion_date} priority={dialogData.priority} selectedTags={dialogData.tags} createdBy={dialogData.createdBy} />
             </div>
         </>

@@ -14,9 +14,10 @@ interface TodoCardProps {
     color?: string,
     onEditClick?: React.MouseEventHandler<SVGSVGElement>
     onCompleteClick?: React.MouseEventHandler<SVGSVGElement>
+    onCardClick?: React.MouseEventHandler<HTMLDivElement>
 }
 
-const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color, onEditClick, onCompleteClick }) => {
+const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color, onEditClick, onCompleteClick, onCardClick }) => {
     return (
         <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
@@ -27,7 +28,7 @@ const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color
                 ease: [0, 0.71, 0.2, 1.01],
             }}
         >
-            <Card className={`w-64 h-40 ${color} overflow-hidden border-0 rounded-2xl`} >
+            <Card className={`w-64 h-40 ${color} overflow-hidden border-0 rounded-2xl cursor-pointer`} onClick={onCardClick}>
                 <CardHeader className="pb-0 pt-4 px-4">
                     <div className="flex items-center gap-2">
                         <span className='font-noto text-base font-normal text-gray-950'>
@@ -45,7 +46,7 @@ const Todos: React.FC<TodoCardProps> = ({ task, priority, completion_date, color
                 <CardContent className="pt-3 px-4 pb-4">
                     <h3 className="text-2xl font-noto text-start font-medium mb-2 text-gray-950 truncate">{task}</h3>
                     <p className="text-base font-normal font-noto text-gray-800 mb-2">{completion_date}</p>
-                    <div className='w-full flex items-center justify-end gap-2'>
+                    <div className='w-full flex items-center justify-end gap-2 z-20'>
                         <FilePenLine onClick={onEditClick} className='text-[#FF8A65] text-sm cursor-pointer' />
                         <ClipboardCheck onClick={onCompleteClick} className='text-[#FF8A65] text-sm cursor-pointer' />
                     </div>
