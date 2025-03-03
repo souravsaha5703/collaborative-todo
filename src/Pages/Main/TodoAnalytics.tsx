@@ -1,32 +1,72 @@
 import React from 'react';
 import Sidebar from '@/components/NavigationBars/Sidebar';
+import useGetTodos from '@/hooks/useGetTodos';
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarCheck,ClockAlert,Hourglass } from 'lucide-react';
+import { CalendarCheck, ClockAlert, Hourglass, Timer } from 'lucide-react';
+import { useAppSelector } from '@/hooks/redux-hooks';
+import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
-        color: "#2563eb",
+    taskCreated: {
+        label: "Task Created",
+        color: "#ea580c",
     },
-    mobile: {
-        label: "Mobile",
-        color: "#60a5fa",
+    taskCompleted: {
+        label: "Task Completed",
+        color: "#fdba74",
     },
 } satisfies ChartConfig
 
 const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
+    { month: "January", taskCreated: 186, taskCompleted: 80 },
+    { month: "February", taskCreated: 305, taskCompleted: 200 },
+    { month: "March", taskCreated: 237, taskCompleted: 120 },
+    { month: "April", taskCreated: 73, taskCompleted: 190 },
+    { month: "May", taskCreated: 209, taskCompleted: 130 },
+    { month: "June", taskCreated: 214, taskCompleted: 140 },
 ]
 
 
 const TodoAnalytics: React.FC = () => {
+    useGetTodos();
+    const todos = useAppSelector((state) => state.todo.todos);
+
+    const completedTasks: TodoInterface[] = todos.filter(todo => todo.task_status == true);
+    const inCompleteTasks: TodoInterface[] = todos.filter(todo => todo.task_status == false);
+    const taskCompletionRate: string = ((completedTasks.length / todos.length) * 100).toFixed(1);
+
+    const taskCompletionDuration: number[] = [];
+
+    completedTasks.forEach(task => {
+        let taskCreationTime: Date = new Date(task.task_created ?? "");
+        let taskCompletionTime: Date = new Date(task.task_completed_date ?? "");
+
+        let timeTaken: number = Math.abs(taskCompletionTime.getTime() - taskCreationTime.getTime());
+
+        taskCompletionDuration.push(timeTaken);
+    });
+
+    let sumOfTime: number = 0;
+
+    taskCompletionDuration.forEach(time => {
+        sumOfTime = sumOfTime + time;
+    });
+
+    const avgCompletionTime: string = ((sumOfTime / completedTasks.length) / (1000 * 60 * 60 * 24)).toFixed(0);
+
+    const onTimeCompletedTasks = completedTasks.filter(task => {
+        let taskCompletionTime: Date = new Date(task.completion_date);
+        let actualTaskCompletedTime: Date = new Date(task.task_completed_date ?? "");
+
+        if (actualTaskCompletedTime <= taskCompletionTime) {
+            return task
+        }
+    });
+
+    const onTimeTaskCompletionRate = ((onTimeCompletedTasks.length / completedTasks.length) * 100).toFixed(1);
+
     return (
         <>
             <Sidebar />
@@ -40,7 +80,7 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Task Completion Rate</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">74%</div>
+                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{taskCompletionRate} %</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -49,7 +89,7 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Avg. Completion Time</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">74%</div>
+                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{avgCompletionTime} Days</div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -58,33 +98,33 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Total Overdue Tasks</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">74%</div>
+                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{inCompleteTasks.length} Tasks</div>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="flex flex-row items-center gap-2">
-                                <CalendarCheck className='text-base text-green-500' />
-                                <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Task Completion Rate</CardTitle>
+                                <Timer className='text-base text-green-500' />
+                                <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">On Time Completion Rate</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">74%</div>
+                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{onTimeTaskCompletionRate} %</div>
                             </CardContent>
                         </Card>
                     </div>
-                    <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                    <ChartContainer config={chartConfig} className="h-[350px] w-full">
                         <BarChart accessibilityLayer data={chartData}>
                             <CartesianGrid vertical={false} />
                             <XAxis
                                 dataKey="month"
                                 tickLine={false}
                                 tickMargin={10}
-                                axisLine={false}
+                                axisLine={true}
                                 tickFormatter={(value) => value.slice(0, 3)}
                             />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <ChartLegend content={<ChartLegendContent />} />
-                            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-                            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+                            <Bar dataKey="taskCreated" fill="var(--color-taskCreated)" radius={4} />
+                            <Bar dataKey="taskCompleted" fill="var(--color-taskCompleted)" radius={4} />
                         </BarChart>
                     </ChartContainer>
                 </div>

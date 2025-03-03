@@ -19,5 +19,6 @@ export interface Todos {
     task_status: boolean,
     createdBy: string | undefined,
     completion_date: string,
-    task_completed_date?: string
+    task_completed_date?: string,
+    task_created?: string
 } 
