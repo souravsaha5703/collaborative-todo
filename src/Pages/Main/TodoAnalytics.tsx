@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarCheck, ClockAlert, Hourglass, Timer } from 'lucide-react';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
+import { NumberTicker } from "@/components/magicui/number-ticker";
 
 const chartConfig = {
     taskCreated: {
@@ -67,6 +68,34 @@ const TodoAnalytics: React.FC = () => {
 
     const onTimeTaskCompletionRate = ((onTimeCompletedTasks.length / completedTasks.length) * 100).toFixed(1);
 
+    const getMonthsTillToday = (): string[] => {
+        const allMonths: string[] = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        const currentMonthIndex: number = new Date().getMonth();
+
+        return allMonths.slice(0, currentMonthIndex + 1);
+    }
+
+    const getChartData = () => {
+        const months: string[] = getMonthsTillToday();
+
+        const startDay: Date = new Date(new Date().getFullYear(), 0, 1);
+        const currentDate: Date = new Date();
+
+        const taskCreatedThisYear: TodoInterface[] = todos.filter(todo => {
+            const taskCreationDate: Date = new Date(todo.task_created ?? "");
+
+            return taskCreationDate >= startDay && taskCreationDate <= currentDate;
+        });
+
+        // const taskCompletedThisYear: TodoInterface[] = todos.filter(todo => {
+            
+        // });
+    }
+
     return (
         <>
             <Sidebar />
@@ -80,7 +109,10 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Task Completion Rate</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{taskCompletionRate} %</div>
+                                <div className='flex gap-1'>
+                                    <NumberTicker value={Number(taskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">%</span>
+                                </div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -89,7 +121,10 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Avg. Completion Time</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{avgCompletionTime} Days</div>
+                                <div className='flex gap-1'>
+                                    <NumberTicker value={Number(avgCompletionTime)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">Days</span>
+                                </div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -98,7 +133,10 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">Total Overdue Tasks</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{inCompleteTasks.length} Tasks</div>
+                                <div className='flex gap-1'>
+                                    <NumberTicker value={inCompleteTasks.length} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">Tasks</span>
+                                </div>
                             </CardContent>
                         </Card>
                         <Card>
@@ -107,7 +145,10 @@ const TodoAnalytics: React.FC = () => {
                                 <CardTitle className="text-lg font-medium font-noto text-gray-900 dark:text-gray-100">On Time Completion Rate</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">{onTimeTaskCompletionRate} %</div>
+                                <div className='flex gap-1'>
+                                    <NumberTicker value={Number(onTimeTaskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">%</span>
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
