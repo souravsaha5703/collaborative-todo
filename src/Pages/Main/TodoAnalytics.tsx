@@ -20,15 +20,11 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-const chartData = [
-    { month: "January", taskCreated: 186, taskCompleted: 80 },
-    { month: "February", taskCreated: 305, taskCompleted: 200 },
-    { month: "March", taskCreated: 237, taskCompleted: 120 },
-    { month: "April", taskCreated: 73, taskCompleted: 190 },
-    { month: "May", taskCreated: 209, taskCompleted: 130 },
-    { month: "June", taskCreated: 214, taskCompleted: 140 },
-]
-
+interface ChartDataInterface {
+    month: string,
+    taskCreated: number,
+    taskCompleted: number
+}
 
 const TodoAnalytics: React.FC = () => {
     useGetTodos();
@@ -79,22 +75,50 @@ const TodoAnalytics: React.FC = () => {
         return allMonths.slice(0, currentMonthIndex + 1);
     }
 
-    const getChartData = () => {
+    const getChartData = (): ChartDataInterface[] => {
         const months: string[] = getMonthsTillToday();
 
         const startDay: Date = new Date(new Date().getFullYear(), 0, 1);
         const currentDate: Date = new Date();
 
         const taskCreatedThisYear: TodoInterface[] = todos.filter(todo => {
-            const taskCreationDate: Date = new Date(todo.task_created ?? "");
+            const allTaskCreationDate: Date = new Date(todo.task_created ?? "");
 
-            return taskCreationDate >= startDay && taskCreationDate <= currentDate;
+            return allTaskCreationDate >= startDay && allTaskCreationDate <= currentDate;
         });
 
-        // const taskCompletedThisYear: TodoInterface[] = todos.filter(todo => {
-            
-        // });
+        const taskCompletedThisYear: TodoInterface[] = completedTasks.filter(todo => {
+            const allCompletedTaskDate: Date = new Date(todo.task_completed_date ?? "");
+
+            return allCompletedTaskDate >= startDay && allCompletedTaskDate <= currentDate;
+        });
+
+        const monthWiseDate: ChartDataInterface[] = months.map(month => {
+            const indexOfMonth: number = months.indexOf(month) + 1;
+
+            const filteredCreatedDates: TodoInterface[] = taskCreatedThisYear.filter(task => {
+                const taskCreatedDateMonth: number = new Date(task.task_created ?? "").getMonth() + 1;
+
+                return taskCreatedDateMonth == indexOfMonth
+            });
+
+            const filteredCompletedDates: TodoInterface[] = taskCompletedThisYear.filter(task => {
+                const taskCompletedDateMonth: number = new Date(task.task_completed_date ?? "").getMonth() + 1;
+
+                return taskCompletedDateMonth == indexOfMonth
+            });
+
+            return {
+                month,
+                taskCreated: filteredCreatedDates.length,
+                taskCompleted: filteredCompletedDates.length
+            }
+        });
+
+        return monthWiseDate;
     }
+
+    const chartData: ChartDataInterface[] = getChartData();
 
     return (
         <>
@@ -152,6 +176,7 @@ const TodoAnalytics: React.FC = () => {
                             </CardContent>
                         </Card>
                     </div>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Monthly Activity Chart</h1>
                     <ChartContainer config={chartConfig} className="h-[350px] w-full">
                         <BarChart accessibilityLayer data={chartData}>
                             <CartesianGrid vertical={false} />
