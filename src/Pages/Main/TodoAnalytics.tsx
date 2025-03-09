@@ -8,6 +8,7 @@ import { CalendarCheck, ClockAlert, Hourglass, Timer } from 'lucide-react';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import { NumberTicker } from "@/components/magicui/number-ticker";
+import CircularScoreRing from "@/components/ui/circular-score-ring";
 
 const chartConfig = {
     taskCreated: {
@@ -193,6 +194,10 @@ const TodoAnalytics: React.FC = () => {
                             <Bar dataKey="taskCompleted" fill="var(--color-taskCompleted)" radius={4} />
                         </BarChart>
                     </ChartContainer>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Productivity Score</h1>
+                    <div className='w-full p-5 flex'>
+                        <CircularScoreRing score={95} />
+                    </div>
                 </div>
             </div>
         </>
