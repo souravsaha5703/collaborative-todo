@@ -121,6 +121,72 @@ const TodoAnalytics: React.FC = () => {
 
     const chartData: ChartDataInterface[] = getChartData();
 
+    const calculateTimeEfficiency = (completedTasks: TodoInterface[]): number => {
+
+        let timeEfficiencyRatioOfAllTasks: number[] = [];
+        completedTasks.forEach(task => {
+            let estimatedTime: Date = new Date(task.completion_date);
+            let actualCompletedTime: Date = new Date(task.task_completed_date ?? "");
+
+            timeEfficiencyRatioOfAllTasks.push(estimatedTime.getTime() / actualCompletedTime.getTime());
+        });
+
+        let sumOfTimeEfficiencyRatio: number = 0;
+        timeEfficiencyRatioOfAllTasks.forEach(time => {
+            sumOfTimeEfficiencyRatio = sumOfTimeEfficiencyRatio + time;
+        });
+
+        let avgTimeEfficiencyRatio: number = sumOfTimeEfficiencyRatio / completedTasks.length;
+
+        let timeEfficiencyPoints: number = 0;
+
+        if (avgTimeEfficiencyRatio > 1) {
+            timeEfficiencyPoints = 100;
+        } else if (avgTimeEfficiencyRatio == 1) {
+            timeEfficiencyPoints = 50;
+        } else {
+            timeEfficiencyPoints = 25;
+        }
+
+        return timeEfficiencyPoints;
+    }
+
+    const timeEfficiency = calculateTimeEfficiency(completedTasks);
+
+    const calculatePriorityCompletion = (completedTasks: TodoInterface[]): number => {
+
+        let allTasksPriorityPoints: number[] = [];
+        completedTasks.forEach(task => {
+            if (task.priority == "1st") {
+                allTasksPriorityPoints.push(100);
+            } else if (task.priority == "2nd") {
+                allTasksPriorityPoints.push(80);
+            } else {
+                allTasksPriorityPoints.push(50);
+            }
+        });
+
+        let sumofPriorityPoints: number = 0;
+
+        allTasksPriorityPoints.forEach(priorityPoints => {
+            sumofPriorityPoints = sumofPriorityPoints + priorityPoints;
+        });
+
+        let avgTaskPriorityPoint = sumofPriorityPoints / completedTasks.length;
+
+        return avgTaskPriorityPoint;
+    }
+
+    const priorityCompletion = calculatePriorityCompletion(completedTasks);
+
+    let completionScore: number = Number(taskCompletionRate) * 0.40;
+    let onTimeCompletionScore: number = Number(onTimeTaskCompletionRate) * 0.20;
+    let timeEfficiencyScore: number = timeEfficiency * 0.20;
+    let priorityCompletionScore: number = priorityCompletion * 0.10;
+    let overDueScore: number = inCompleteTasks.length * 0.10;
+
+    const productivityScore: number = completionScore + onTimeCompletionScore + timeEfficiencyScore + priorityCompletionScore + overDueScore;
+
     return (
         <>
             <Sidebar />
@@ -195,8 +261,29 @@ const TodoAnalytics: React.FC = () => {
                         </BarChart>
                     </ChartContainer>
                     <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Productivity Score</h1>
-                    <div className='w-full p-5 flex'>
-                        <CircularScoreRing score={95} />
+                    <div className='w-full p-5 flex gap-14 mb-10 max-[862px]:flex-col max-[600px]:gap-8 max-[461px]:p-2'>
+                        <CircularScoreRing score={productivityScore} />
+                        <div className='flex flex-col gap-1 p-5 max-[461px]:p-2'>
+                            <h1 className='font-noto text-xl font-medium text-start text-gray-900 dark:text-gray-200 max-[532px]:text-base'>Productivity Score measures on the basis of following Parameters :-</h1>
+                            <div className='flex gap-10 max-[532px]:gap-2'>
+                                <div className='flex flex-col text-center'>
+                                    <h2 className='font-noto text-lg font-normal text-gray-900 dark:text-gray-200 underline max-[532px]:text-base'>Parameters</h2>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> - Task Completion Rate </h4>
+                                    <h4 className='font-noto text-base font-normal text-start truncate text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> - On Time Task Completion Rate </h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> - Time Efficiency </h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> - Prority Completion </h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> - Overdue Tasks </h4>
+                                </div>
+                                <div className='flex flex-col text-center'>
+                                    <h2 className='font-noto text-lg font-normal text-gray-900 dark:text-gray-200 underline max-[532px]:text-base'>Weightage</h2>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> ( 40% weight )</h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> ( 20% weight )</h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> ( 20% weight )</h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> ( 10% weight )</h4>
+                                    <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200 max-[532px]:text-sm max-[401px]:text-xs'> ( 10% weight )</h4>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
