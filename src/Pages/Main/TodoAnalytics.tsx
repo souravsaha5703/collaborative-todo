@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from '@/components/NavigationBars/Sidebar';
 import useGetTodos from '@/hooks/useGetTodos';
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, PieChart, Pie, Tooltip, Cell } from "recharts";
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarCheck, ClockAlert, Hourglass, Timer } from 'lucide-react';
@@ -9,6 +9,10 @@ import { useAppSelector } from '@/hooks/redux-hooks';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import { NumberTicker } from "@/components/magicui/number-ticker";
 import CircularScoreRing from "@/components/ui/circular-score-ring";
+import { calculateTimeEfficiency } from '@/controllers/calculateTimeEfficiency';
+import { calculatePriorityCompletion } from '@/controllers/calculatePriorityCompletion';
+import { calculateTaskDistribution } from '@/controllers/calculateTaskDistribution';
+import RenderCustomizedLabel from '@/components/ui/pieChartLabel';
 
 const chartConfig = {
     taskCreated: {
@@ -121,61 +125,7 @@ const TodoAnalytics: React.FC = () => {
 
     const chartData: ChartDataInterface[] = getChartData();
 
-    const calculateTimeEfficiency = (completedTasks: TodoInterface[]): number => {
-
-        let timeEfficiencyRatioOfAllTasks: number[] = [];
-        completedTasks.forEach(task => {
-            let estimatedTime: Date = new Date(task.completion_date);
-            let actualCompletedTime: Date = new Date(task.task_completed_date ?? "");
-
-            timeEfficiencyRatioOfAllTasks.push(estimatedTime.getTime() / actualCompletedTime.getTime());
-        });
-
-        let sumOfTimeEfficiencyRatio: number = 0;
-        timeEfficiencyRatioOfAllTasks.forEach(time => {
-            sumOfTimeEfficiencyRatio = sumOfTimeEfficiencyRatio + time;
-        });
-
-        let avgTimeEfficiencyRatio: number = sumOfTimeEfficiencyRatio / completedTasks.length;
-
-        let timeEfficiencyPoints: number = 0;
-
-        if (avgTimeEfficiencyRatio > 1) {
-            timeEfficiencyPoints = 100;
-        } else if (avgTimeEfficiencyRatio == 1) {
-            timeEfficiencyPoints = 50;
-        } else {
-            timeEfficiencyPoints = 25;
-        }
-
-        return timeEfficiencyPoints;
-    }
-
     const timeEfficiency = calculateTimeEfficiency(completedTasks);
-
-    const calculatePriorityCompletion = (completedTasks: TodoInterface[]): number => {
-
-        let allTasksPriorityPoints: number[] = [];
-        completedTasks.forEach(task => {
-            if (task.priority == "1st") {
-                allTasksPriorityPoints.push(100);
-            } else if (task.priority == "2nd") {
-                allTasksPriorityPoints.push(80);
-            } else {
-                allTasksPriorityPoints.push(50);
-            }
-        });
-
-        let sumofPriorityPoints: number = 0;
-
-        allTasksPriorityPoints.forEach(priorityPoints => {
-            sumofPriorityPoints = sumofPriorityPoints + priorityPoints;
-        });
-
-        let avgTaskPriorityPoint = sumofPriorityPoints / completedTasks.length;
-
-        return avgTaskPriorityPoint;
-    }
 
     const priorityCompletion = calculatePriorityCompletion(completedTasks);
 
@@ -184,6 +134,9 @@ const TodoAnalytics: React.FC = () => {
     let timeEfficiencyScore: number = timeEfficiency * 0.20;
     let priorityCompletionScore: number = priorityCompletion * 0.10;
     let overDueScore: number = inCompleteTasks.length * 0.10;
+
+    const pieChartData: { name: string, value: number }[] = calculateTaskDistribution(todos);
+    const COLORS: string[] = ["#f97316", "#fed7aa", "#eab308"];
 
     const productivityScore: number = completionScore + onTimeCompletionScore + timeEfficiencyScore + priorityCompletionScore + overDueScore;
 
@@ -285,6 +238,24 @@ const TodoAnalytics: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Task Distribution by Priority</h1>
+                    <PieChart width={300} height={300}>
+                        <Pie
+                            data={pieChartData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={RenderCustomizedLabel}
+                        >
+                            {pieChartData.map((_, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                    </PieChart>
                 </div>
             </div>
         </>
