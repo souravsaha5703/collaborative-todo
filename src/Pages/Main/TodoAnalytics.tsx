@@ -9,9 +9,11 @@ import { useAppSelector } from '@/hooks/redux-hooks';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import { NumberTicker } from "@/components/magicui/number-ticker";
 import CircularScoreRing from "@/components/ui/circular-score-ring";
+import { calculateChartData } from '@/controllers/calculateChartData';
 import { calculateTimeEfficiency } from '@/controllers/calculateTimeEfficiency';
 import { calculatePriorityCompletion } from '@/controllers/calculatePriorityCompletion';
 import { calculateTaskDistribution } from '@/controllers/calculateTaskDistribution';
+import { calculateTaskStatus } from '@/controllers/calculateTaskStatus';
 import RenderCustomizedLabel from '@/components/ui/pieChartLabel';
 
 const chartConfig = {
@@ -80,50 +82,9 @@ const TodoAnalytics: React.FC = () => {
         return allMonths.slice(0, currentMonthIndex + 1);
     }
 
-    const getChartData = (): ChartDataInterface[] => {
-        const months: string[] = getMonthsTillToday();
+    const months: string[] = getMonthsTillToday();
 
-        const startDay: Date = new Date(new Date().getFullYear(), 0, 1);
-        const currentDate: Date = new Date();
-
-        const taskCreatedThisYear: TodoInterface[] = todos.filter(todo => {
-            const allTaskCreationDate: Date = new Date(todo.task_created ?? "");
-
-            return allTaskCreationDate >= startDay && allTaskCreationDate <= currentDate;
-        });
-
-        const taskCompletedThisYear: TodoInterface[] = completedTasks.filter(todo => {
-            const allCompletedTaskDate: Date = new Date(todo.task_completed_date ?? "");
-
-            return allCompletedTaskDate >= startDay && allCompletedTaskDate <= currentDate;
-        });
-
-        const monthWiseDate: ChartDataInterface[] = months.map(month => {
-            const indexOfMonth: number = months.indexOf(month) + 1;
-
-            const filteredCreatedDates: TodoInterface[] = taskCreatedThisYear.filter(task => {
-                const taskCreatedDateMonth: number = new Date(task.task_created ?? "").getMonth() + 1;
-
-                return taskCreatedDateMonth == indexOfMonth
-            });
-
-            const filteredCompletedDates: TodoInterface[] = taskCompletedThisYear.filter(task => {
-                const taskCompletedDateMonth: number = new Date(task.task_completed_date ?? "").getMonth() + 1;
-
-                return taskCompletedDateMonth == indexOfMonth
-            });
-
-            return {
-                month,
-                taskCreated: filteredCreatedDates.length,
-                taskCompleted: filteredCompletedDates.length
-            }
-        });
-
-        return monthWiseDate;
-    }
-
-    const chartData: ChartDataInterface[] = getChartData();
+    const chartData: ChartDataInterface[] = calculateChartData(todos, completedTasks, months);
 
     const timeEfficiency = calculateTimeEfficiency(completedTasks);
 
@@ -136,6 +97,7 @@ const TodoAnalytics: React.FC = () => {
     let overDueScore: number = inCompleteTasks.length * 0.10;
 
     const pieChartData: { name: string, value: number }[] = calculateTaskDistribution(todos);
+    const pieChartDataForTaskStatus: { name: string, value: number }[] = calculateTaskStatus(todos);
     const COLORS: string[] = ["#f97316", "#fed7aa", "#eab308"];
 
     const productivityScore: number = completionScore + onTimeCompletionScore + timeEfficiencyScore + priorityCompletionScore + overDueScore;
@@ -196,7 +158,7 @@ const TodoAnalytics: React.FC = () => {
                             </CardContent>
                         </Card>
                     </div>
-                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Monthly Activity Chart</h1>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Your Monthly Activity Chart</h1>
                     <ChartContainer config={chartConfig} className="h-[350px] w-full">
                         <BarChart accessibilityLayer data={chartData}>
                             <CartesianGrid vertical={false} />
@@ -213,7 +175,7 @@ const TodoAnalytics: React.FC = () => {
                             <Bar dataKey="taskCompleted" fill="var(--color-taskCompleted)" radius={4} />
                         </BarChart>
                     </ChartContainer>
-                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Productivity Score</h1>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Your Productivity Score</h1>
                     <div className='w-full p-5 flex gap-14 mb-10 max-[862px]:flex-col max-[600px]:gap-8 max-[461px]:p-2'>
                         <CircularScoreRing score={productivityScore} />
                         <div className='flex flex-col gap-1 p-5 max-[461px]:p-2'>
@@ -238,24 +200,68 @@ const TodoAnalytics: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200'>Task Distribution by Priority</h1>
-                    <PieChart width={300} height={300}>
-                        <Pie
-                            data={pieChartData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                            label={RenderCustomizedLabel}
-                        >
-                            {pieChartData.map((_, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Your Task Distribution by Priority</h1>
+                    <div className='w-full p-3 flex gap-5 mb-10 max-[862px]:flex-col'>
+                        <PieChart width={250} height={200}>
+                            <Pie
+                                data={pieChartData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="value"
+                                label={RenderCustomizedLabel}
+                            >
+                                {pieChartData.map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                        <div className='flex gap-3 items-center'>
+                            <div className='flex flex-col text-center gap-2'>
+                                <span className="w-4 h-4 bg-[#eab308] rounded"></span>
+                                <span className="w-4 h-4 bg-[#f97316] rounded"></span>
+                                <span className="w-4 h-4 bg-[#fed7aa] rounded"></span>
+                            </div>
+                            <div className='flex flex-col text-center'>
+                                <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200'>Priority Level 1st</h4>
+                                <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200'>Priority Level 2nd</h4>
+                                <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200'>Priority Level none</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Your Task Distribution by Task Status</h1>
+                    <div className='w-full p-3 flex gap-5 mb-10 max-[862px]:flex-col'>
+                        <PieChart width={250} height={200}>
+                            <Pie
+                                data={pieChartDataForTaskStatus}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="value"
+                                label={RenderCustomizedLabel}
+                            >
+                                {pieChartData.map((_, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip />
+                        </PieChart>
+                        <div className='flex gap-3 items-center'>
+                            <div className='flex flex-col text-center gap-2'>
+                                <span className="w-4 h-4 bg-[#f97316] rounded"></span>
+                                <span className="w-4 h-4 bg-[#fed7aa] rounded"></span>
+                            </div>
+                            <div className='flex flex-col text-center'>
+                                <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200'>Completed Task</h4>
+                                <h4 className='font-noto text-base font-normal text-start text-gray-900 dark:text-gray-200'>Incomplete Task</h4>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
