@@ -10,6 +10,20 @@ interface StatusData {
     incomplete: number
 }
 
+export const calculateTaskDistribution = (todos: TodoInterface[]): ChartData[] => {
+    const taskPriorityOccurance: Record<string, number> = todos.reduce((acc, task) => {
+        acc[task.priority] = (acc[task.priority] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const pieChartDataForTaskPriority: ChartData[] = Object.entries(taskPriorityOccurance).map(([priority, count]) => ({
+        name: priority,
+        value: count
+    }));
+
+    return pieChartDataForTaskPriority;
+}
+
 export const calculateTaskStatus = (todos: TodoInterface[]) => {
     const taskStatus: StatusData = {
         completed: 0,

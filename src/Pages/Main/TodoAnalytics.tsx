@@ -10,10 +10,8 @@ import { Todos as TodoInterface } from '@/utils/AppInterfaces';
 import { NumberTicker } from "@/components/magicui/number-ticker";
 import CircularScoreRing from "@/components/ui/circular-score-ring";
 import { calculateChartData } from '@/controllers/calculateChartData';
-import { calculateTimeEfficiency } from '@/controllers/calculateTimeEfficiency';
-import { calculatePriorityCompletion } from '@/controllers/calculatePriorityCompletion';
-import { calculateTaskDistribution } from '@/controllers/calculateTaskDistribution';
-import { calculateTaskStatus } from '@/controllers/calculateTaskStatus';
+import { calculateTaskDistribution, calculateTaskStatus } from '@/controllers/calculatePichartData';
+import { calculateProductivityScore } from '@/controllers/calculateProductivityscore';
 import RenderCustomizedLabel from '@/components/ui/pieChartLabel';
 
 const chartConfig = {
@@ -71,36 +69,13 @@ const TodoAnalytics: React.FC = () => {
 
     const onTimeTaskCompletionRate = ((onTimeCompletedTasks.length / completedTasks.length) * 100).toFixed(1);
 
-    const getMonthsTillToday = (): string[] => {
-        const allMonths: string[] = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-
-        const currentMonthIndex: number = new Date().getMonth();
-
-        return allMonths.slice(0, currentMonthIndex + 1);
-    }
-
-    const months: string[] = getMonthsTillToday();
-
-    const chartData: ChartDataInterface[] = calculateChartData(todos, completedTasks, months);
-
-    const timeEfficiency = calculateTimeEfficiency(completedTasks);
-
-    const priorityCompletion = calculatePriorityCompletion(completedTasks);
-
-    let completionScore: number = Number(taskCompletionRate) * 0.40;
-    let onTimeCompletionScore: number = Number(onTimeTaskCompletionRate) * 0.20;
-    let timeEfficiencyScore: number = timeEfficiency * 0.20;
-    let priorityCompletionScore: number = priorityCompletion * 0.10;
-    let overDueScore: number = inCompleteTasks.length * 0.10;
+    const chartData: ChartDataInterface[] = calculateChartData(todos, completedTasks);
 
     const pieChartData: { name: string, value: number }[] = calculateTaskDistribution(todos);
     const pieChartDataForTaskStatus: { name: string, value: number }[] = calculateTaskStatus(todos);
     const COLORS: string[] = ["#f97316", "#fed7aa", "#eab308"];
 
-    const productivityScore: number = completionScore + onTimeCompletionScore + timeEfficiencyScore + priorityCompletionScore + overDueScore;
+    const productivityScore: number = calculateProductivityScore(taskCompletionRate, onTimeTaskCompletionRate, inCompleteTasks, completedTasks);
 
     return (
         <>

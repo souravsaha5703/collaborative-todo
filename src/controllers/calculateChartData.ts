@@ -6,7 +6,19 @@ interface ChartDataInterface {
     taskCompleted: number
 }
 
-export const calculateChartData = (todos: TodoInterface[], completedTasks: TodoInterface[], months: string[]): ChartDataInterface[] => {
+const getMonthsTillToday = (): string[] => {
+    const allMonths: string[] = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const currentMonthIndex: number = new Date().getMonth();
+
+    return allMonths.slice(0, currentMonthIndex + 1);
+}
+
+export const calculateChartData = (todos: TodoInterface[], completedTasks: TodoInterface[]): ChartDataInterface[] => {
+    const months: string[] = getMonthsTillToday();
     const startDay: Date = new Date(new Date().getFullYear(), 0, 1);
     const currentDate: Date = new Date();
 
