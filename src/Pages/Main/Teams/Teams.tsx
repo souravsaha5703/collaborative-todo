@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from '@/components/NavigationBars/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Plus, UserRoundPlus } from 'lucide-react';
 import TeamCards from '@/components/Teams/TeamCards';
+import CreateTeamDialog from '@/components/DialogBoxes/CreateTeamDialog';
 
 const Teams: React.FC = () => {
+    const [isCreateTeamDialogBoxOpen, setIsCreateTeamDialogBoxOpen] = useState<boolean>(false);
+
+    const handleCreateTeamBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setIsCreateTeamDialogBoxOpen(true);
+    }
+
     return (
         <>
             <Sidebar />
@@ -16,7 +24,7 @@ const Teams: React.FC = () => {
                             <p className="text-muted-foreground font-noto text-base">Create or join teams to collaborate on todo lists with others.</p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Button size='lg' variant='default' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-36 max-[375px]:text-sm'><Plus className='max-[375px]:text-base' /> Create Team</Button>
+                            <Button onClick={handleCreateTeamBtn} size='lg' variant='default' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-36 max-[375px]:text-sm'><Plus className='max-[375px]:text-base' /> Create Team</Button>
                             <Button size='lg' variant='secondary' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-32 max-[375px]:text-sm'><UserRoundPlus className='mr-1' /> Join Team</Button>
                         </div>
                     </div>
@@ -39,6 +47,7 @@ const Teams: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <CreateTeamDialog isDialogOpen={isCreateTeamDialogBoxOpen} setIsDialogOpen={setIsCreateTeamDialogBoxOpen} />
         </>
     )
 }
