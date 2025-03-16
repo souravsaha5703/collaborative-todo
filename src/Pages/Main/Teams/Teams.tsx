@@ -4,13 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Plus, UserRoundPlus } from 'lucide-react';
 import TeamCards from '@/components/Teams/TeamCards';
 import CreateTeamDialog from '@/components/DialogBoxes/CreateTeamDialog';
+import JoinTeamDialog from '@/components/DialogBoxes/JoinTeamDialog';
 
 const Teams: React.FC = () => {
     const [isCreateTeamDialogBoxOpen, setIsCreateTeamDialogBoxOpen] = useState<boolean>(false);
+    const [isJoinTeamDialogBoxOpen, setIsJoinTeamDialogBoxOpen] = useState<boolean>(false);
 
     const handleCreateTeamBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setIsCreateTeamDialogBoxOpen(true);
+    }
+
+    const handleJoinTeamBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        setIsJoinTeamDialogBoxOpen(true);
     }
 
     return (
@@ -25,7 +32,7 @@ const Teams: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-3">
                             <Button onClick={handleCreateTeamBtn} size='lg' variant='default' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-36 max-[375px]:text-sm'><Plus className='max-[375px]:text-base' /> Create Team</Button>
-                            <Button size='lg' variant='secondary' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-32 max-[375px]:text-sm'><UserRoundPlus className='mr-1' /> Join Team</Button>
+                            <Button onClick={handleJoinTeamBtn} size='lg' variant='secondary' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-32 max-[375px]:text-sm'><UserRoundPlus className='mr-1' /> Join Team</Button>
                         </div>
                     </div>
 
@@ -48,6 +55,7 @@ const Teams: React.FC = () => {
                 </div>
             </div>
             <CreateTeamDialog isDialogOpen={isCreateTeamDialogBoxOpen} setIsDialogOpen={setIsCreateTeamDialogBoxOpen} />
+            <JoinTeamDialog isDialogOpen={isJoinTeamDialogBoxOpen} setIsDialogOpen={setIsJoinTeamDialogBoxOpen} />
         </>
     )
 }

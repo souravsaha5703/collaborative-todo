@@ -13,6 +13,7 @@ import { Input } from '../ui/input';
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from '../ui/label';
 import Loader from '../Loaders/Loader';
+import inviteCodeGenerator from '@/utils/inviteCodeGenerator';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import { database } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
@@ -46,7 +47,8 @@ const CreateTeamDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen
                     ID.unique(), {
                     team_name: teamName,
                     team_description: description,
-                    createdBy: user?.id
+                    createdBy: user?.id,
+                    invite_code: inviteCodeGenerator()
                 }
                 );
                 await database.createDocument(
