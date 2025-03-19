@@ -8,6 +8,7 @@ import JoinTeamDialog from '@/components/DialogBoxes/JoinTeamDialog';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import { database, storage } from '@/Appwrite/appwriteConfig';
 import { Models, Query } from 'appwrite';
+import Loader from '@/components/Loaders/Loader';
 
 interface AvatarDetails {
     imageUrl: string
@@ -30,6 +31,7 @@ const Teams: React.FC = () => {
     const [isJoinTeamDialogBoxOpen, setIsJoinTeamDialogBoxOpen] = useState<boolean>(false);
     const [teamExists, setTeamExists] = useState<boolean>(true);
     const [teams, setTeams] = useState<TeamInterface[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const user = useAppSelector((state) => state.user.currentUser);
 
@@ -92,6 +94,12 @@ const Teams: React.FC = () => {
         getTeams();
     }, []);
 
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000)
+    }, []);
+
     const handleCreateTeamBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setIsCreateTeamDialogBoxOpen(true);
@@ -117,26 +125,35 @@ const Teams: React.FC = () => {
                             <Button onClick={handleJoinTeamBtn} size='lg' variant='secondary' className='w-40 h-12 text-base font-noto font-medium max-[375px]:w-32 max-[375px]:text-sm'><UserRoundPlus className='mr-1' /> Join Team</Button>
                         </div>
                     </div>
-                    {teamExists ? (
-                        <div className="grid gap-4 min-[840px]:grid-cols-2 mb-20">
-                            {teams.map((team, index) => {
-                                return (
-                                    <TeamCards
-                                        key={index}
-                                        team_name={team.team_name}
-                                        team_description={team.team_description}
-                                        memberCount={team.memberCount}
-                                        role={team.role}
-                                        avatars={team.avatars}
-                                    />
-                                )
-                            })}
+                    {loading ? (
+                        <div className='w-full py-5 px-1 flex items-center justify-center'>
+                            <Loader />
                         </div>
                     ) : (
-                        <div className="rounded-lg border border-dashed p-8 text-center">
-                            <UserRoundPlus className="mx-auto h-10 w-10 text-muted-foreground" />
-                            <h2 className="mt-2 text-xl font-semibold">No teams found</h2>
-                            <p className="mt-1 text-sm text-muted-foreground">You haven&apos;t created or joined any teams yet.</p>
+                        <div>
+                            {teamExists ? (
+                                <div className="grid gap-4 min-[840px]:grid-cols-2 mb-20">
+                                    {teams.map((team, index) => {
+                                        return (
+                                            <TeamCards
+                                                key={index}
+                                                team_id={team.id}
+                                                team_name={team.team_name}
+                                                team_description={team.team_description}
+                                                memberCount={team.memberCount}
+                                                role={team.role}
+                                                avatars={team.avatars}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="rounded-lg border border-dashed p-8 text-center">
+                                    <UserRoundPlus className="mx-auto h-10 w-10 text-muted-foreground" />
+                                    <h2 className="mt-2 text-xl font-semibold">No teams found</h2>
+                                    <p className="mt-1 text-sm text-muted-foreground">You haven&apos;t created or joined any teams yet.</p>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

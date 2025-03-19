@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users } from "lucide-react";
 import { AvatarCircles } from "@/components/magicui/avatar-circles";
+import { useNavigate } from 'react-router-dom';
 
 interface AvatarDetails {
     imageUrl: string
 }
 
 interface TeamCardProps {
+    team_id: string;
     team_name: string;
     team_description: string;
     memberCount: number;
@@ -17,7 +19,12 @@ interface TeamCardProps {
     avatars: AvatarDetails[]
 }
 
-const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, memberCount, role, avatars }) => {
+const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, memberCount, role, avatars, team_id }) => {
+    const navigate = useNavigate();
+
+    const handleViewTeamBtn = () => {
+        navigate(`team_dashboard/${team_id}`);
+    }
     return (
         <Card className='p-1 max-[375px]:p-0'>
             <CardHeader className="pb-3">
@@ -37,8 +44,8 @@ const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, membe
                 </div>
             </CardContent>
             <CardFooter className="pt-3">
-                <Button className="w-full font-noto text-base font-medium" size='lg'>
-                    View Team Tasks
+                <Button onClick={handleViewTeamBtn} className="w-full font-noto text-base font-medium" size='lg'>
+                    View Team
                 </Button>
             </CardFooter>
         </Card>
