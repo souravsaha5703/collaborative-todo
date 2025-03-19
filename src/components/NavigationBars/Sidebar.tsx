@@ -19,10 +19,12 @@ const Sidebar: React.FC = () => {
     return (
         <nav className='p-2 fixed z-50 left-0 bottom-0 w-full bg-background drop-shadow-2xl overflow-hidden max-md:rounded-t-2xl md:rounded-r-2xl md:top-0 md:bottom-auto md:w-20 md:h-screen'>
             <div className='w-full h-full rounded-r-xl flex gap-4 items-center md:flex-col md:py-4 max-md:justify-center max-md:flex-row-reverse'>
-                <Avatar className='max-md:size-7'>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
+                <NavLink to={'/user/profile'}>
+                    <Avatar className='max-md:size-7'>
+                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                </NavLink>
                 <p className='text-sm text-center font-noto font-normal max-md:hidden'>{user?.fullname}</p>
                 <div className='flex gap-2 items-center justify-center md:w-full md:flex-col md:py-4'>
                     <TooltipProvider>
