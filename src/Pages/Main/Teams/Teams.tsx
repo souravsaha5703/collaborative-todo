@@ -6,8 +6,12 @@ import TeamCards from '@/components/Teams/TeamCards';
 import CreateTeamDialog from '@/components/DialogBoxes/CreateTeamDialog';
 import JoinTeamDialog from '@/components/DialogBoxes/JoinTeamDialog';
 import { useAppSelector } from '@/hooks/redux-hooks';
-import { database } from '@/Appwrite/appwriteConfig';
+import { database, storage } from '@/Appwrite/appwriteConfig';
 import { Models, Query } from 'appwrite';
+
+interface AvatarDetails {
+    imageUrl: string
+}
 
 interface TeamInterface {
     id: string;
@@ -17,7 +21,8 @@ interface TeamInterface {
     invite_code: string;
     createdAt: string;
     memberCount: number;
-    role: string
+    role: string;
+    avatars: AvatarDetails[]
 }
 
 const Teams: React.FC = () => {
@@ -56,6 +61,14 @@ const Teams: React.FC = () => {
 
                         teamsData.documents.forEach(async (data) => {
                             let userRole = data.members.map((member: Models.Document) => member.user_id.$id == user.id ? member.role : "");
+                            let membersAvatarIds = data.members.map((member: Models.Document) => member.user_id.profileImage);
+                            const membersAvatar: AvatarDetails[] = [];
+                            membersAvatarIds.forEach((id: string) => {
+                                const imageUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_PROFILE_IMAGE_BUCKET_ID, id);
+                                membersAvatar.push({
+                                    imageUrl: imageUrl
+                                });
+                            });
                             let dataObject: TeamInterface = {
                                 id: data.$id,
                                 team_name: data.team_name,
@@ -64,7 +77,8 @@ const Teams: React.FC = () => {
                                 invite_code: data.invite_code,
                                 createdAt: data.$createdAt,
                                 memberCount: data.members.length,
-                                role: userRole
+                                role: userRole,
+                                avatars: membersAvatar
                             }
                             setTeams((prev) => [...prev, dataObject]);
                         });
@@ -113,6 +127,7 @@ const Teams: React.FC = () => {
                                         team_description={team.team_description}
                                         memberCount={team.memberCount}
                                         role={team.role}
+                                        avatars={team.avatars}
                                     />
                                 )
                             })}

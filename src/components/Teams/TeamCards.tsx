@@ -5,29 +5,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Users } from "lucide-react";
 import { AvatarCircles } from "@/components/magicui/avatar-circles";
 
-const avatars = [
-    {
-        imageUrl: "https://avatars.githubusercontent.com/u/16860528",
-
-    },
-    {
-        imageUrl: "https://avatars.githubusercontent.com/u/20110627",
-
-    },
-    {
-        imageUrl: "https://avatars.githubusercontent.com/u/106103625",
-
-    },
-];
-
-interface TeamCardProps {
-    team_name: string,
-    team_description: string,
-    memberCount: number,
-    role: string
+interface AvatarDetails {
+    imageUrl: string
 }
 
-const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, memberCount,role }) => {
+interface TeamCardProps {
+    team_name: string;
+    team_description: string;
+    memberCount: number;
+    role: string;
+    avatars: AvatarDetails[]
+}
+
+const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, memberCount, role, avatars }) => {
     return (
         <Card className='p-1 max-[375px]:p-0'>
             <CardHeader className="pb-3">
@@ -36,7 +26,7 @@ const TeamCards: React.FC<TeamCardProps> = ({ team_name, team_description, membe
             </CardHeader>
             <CardContent className="pb-1">
                 <div className="flex items-center gap-2 max-[375px]:flex-col max-[375px]:items-start">
-                    <AvatarCircles numPeople={10} avatarUrls={avatars} />
+                    <AvatarCircles numPeople={avatars.length - 1} avatarUrls={avatars} />
                     <div className="flex items-center gap-1">
                         <Users className="h-4 w-4 text-muted-foreground" />
                         <span className="text-sm font-noto font-normal text-muted-foreground">{memberCount} members</span>
