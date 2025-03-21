@@ -1,13 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Sidebar from '../NavigationBars/Sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings, Users, PlusCircle } from "lucide-react";
 import { useParams } from 'react-router-dom';
+import { database } from '@/Appwrite/appwriteConfig';
+import { Query, Models } from 'appwrite';
+import { useAppSelector } from '@/hooks/redux-hooks';
+
+interface TeamInterface {
+    id: string;
+    team_name: string;
+    team_description: string;
+    createdBy: string;
+    invite_code: string;
+    createdAt: string;
+    memberCount: number;
+    role?: string;
+}
 
 const TeamDashboard: React.FC = () => {
+    const [teamData, setTeamData] = useState<TeamInterface | null>();
     const { team_id } = useParams();
+    const user = useAppSelector((state) => state.user.currentUser);
+
+    useEffect(() => {
+        const fetchTeamData = async () => {
+            const teamsData = await database.listDocuments(
+                import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                import.meta.env.VITE_APPWRITE_TEAMS_COLLECTION_ID,
+                [Query.equal('$id', team_id ?? "")]
+            );
+
+            let userRole = teamsData.documents[0].members.map((member: Models.Document) => member.user_id.$id == user?.id ? member.role : "");
+
+            setTeamData(prevData => ({
+                ...prevData,
+                id: team_id ?? "",
+                team_name: teamsData.documents[0].team_name,
+                team_description: teamsData.documents[0].team_description,
+                createdBy: teamsData.documents[0].createdBy,
+                invite_code: teamsData.documents[0].invite_code,
+                createdAt: teamsData.documents[0].$createdAt,
+                memberCount: teamsData.documents[0].members.length,
+                role: userRole
+            }));
+        }
+
+        fetchTeamData();
+    }, [team_id]);
 
     return (
         <>
@@ -17,8 +59,8 @@ const TeamDashboard: React.FC = () => {
                     <div className="w-full flex items-start justify-between">
                         <div className='flex flex-col gap-1'>
                             <div className="flex items-center gap-4">
-                                <h1 className="text-3xl font-noto font-bold tracking-tight">Team UI / UX {team_id}</h1>
-                                <Badge variant="outline" className='font-noto'>admin</Badge>
+                                <h1 className="text-3xl font-noto font-bold tracking-tight">{teamData?.team_name}</h1>
+                                <Badge variant="outline" className='font-noto'>{teamData?.role}</Badge>
                             </div>
                             <p className="text-muted-foreground font-noto">Collaboration on ui ux</p>
                         </div>
