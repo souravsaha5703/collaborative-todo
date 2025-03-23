@@ -6,7 +6,7 @@ import Dashboard from './Pages/Main/Dashboard';
 import AllTodos from './Pages/Main/AllTodos';
 import TodoAnalytics from './Pages/Main/TodoAnalytics';
 import Teams from './Pages/Main/Teams/Teams';
-import TeamDashboard from './components/Teams/TeamDashboard';
+import TeamDashboard from './Pages/Main/Teams/TeamDashboard';
 import Profile from './Pages/Main/Profile';
 import ProtectedRoutes from './ProtectedRoutes';
 import Page from './Pages/LandingPage/Page';
