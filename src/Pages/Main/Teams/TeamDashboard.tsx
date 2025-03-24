@@ -10,6 +10,7 @@ import { Query, Models } from 'appwrite';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import CreateListDialog from '../../../components/DialogBoxes/CreateListDialog';
 import ListCards from '@/components/Teams/ListCards';
+import useGetTeamData from '@/hooks/useGetTeamData';
 
 interface TeamInterface {
     id: string;
@@ -35,6 +36,7 @@ const TeamDashboard: React.FC = () => {
     const [lists, setLists] = useState<ListInterface[]>([]);
     const { team_id } = useParams();
     const user = useAppSelector((state) => state.user.currentUser);
+    useGetTeamData(team_id);
 
     useEffect(() => {
         const fetchTeamsData = async () => {
