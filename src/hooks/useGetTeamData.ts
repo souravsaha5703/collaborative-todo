@@ -5,11 +5,11 @@ import { Query, Models } from "appwrite";
 import { Team as TeamInterface, Members } from "@/utils/AppInterfaces";
 import { addTeam } from "@/features/Teams/teamSlice";
 
-const useGetTeamData = (teamId: string | undefined) => {
+const useGetTeamData = (teamId: string): void => {
     const dispatch = useAppDispatch();
     useEffect(() => {
         const fetchTeamInfo = async () => {
-            if (teamId) {
+            if (teamId != "") {
                 const teamData = await database.listDocuments(
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_TEAMS_COLLECTION_ID,
@@ -34,7 +34,8 @@ const useGetTeamData = (teamId: string | undefined) => {
                     team_description: teamData.documents[0].team_description,
                     createdBy: teamData.documents[0].createdBy.$id,
                     invite_code: teamData.documents[0].invite_code,
-                    members: teamMembers
+                    members: teamMembers,
+                    createdAt: teamData.documents[0].$createdAt
                 }
 
                 dispatch(addTeam(teamObject));

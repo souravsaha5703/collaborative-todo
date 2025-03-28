@@ -3,6 +3,7 @@ import authReducer from '@/features/Auth/authSlice';
 import tagReducer from '@/features/Tags/tagSlice';
 import todoReducer from '@/features/Todo/todoSlice';
 import teamReducer from '@/features/Teams/teamSlice';
+import listReducer from '@/features/Teams/listSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     tag: tagReducer,
     todo: todoReducer,
     team: teamReducer,
+    list: listReducer,
   },
 })
 

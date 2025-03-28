@@ -38,4 +38,13 @@ export interface Team {
     createdBy: string;
     invite_code: string;
     members: Members[];
+    createdAt: string;
+}
+
+export interface List {
+    id: string;
+    list_name: string;
+    team_id: string;
+    createdBy: string;
+    createdAt: string;
 }

@@ -12,6 +12,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import Loader from '../Loaders/Loader';
+import { useAppDispatch } from '@/hooks/redux-hooks';
+import { addList } from '@/features/Teams/listSlice';
+import { List as ListInterface } from '@/utils/AppInterfaces';
 import { database } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
 
@@ -27,6 +30,7 @@ const CreateListDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen
     const [errorOccur, setErrorOccur] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
     const handleCreateList = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -37,7 +41,7 @@ const CreateListDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen
             setLoading(false);
         } else {
             try {
-                await database.createDocument(
+                const createList = await database.createDocument(
                     import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                     import.meta.env.VITE_APPWRITE_LISTS_COLLECTION_ID,
                     ID.unique(), {
@@ -46,6 +50,14 @@ const CreateListDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen
                     team_id: teamId
                 }
                 );
+                const listDataObject: ListInterface = {
+                    id: createList.$id,
+                    list_name: createList.list_name,
+                    team_id: createList.team_id,
+                    createdBy: createList.createdBy,
+                    createdAt: createList.$createdAt
+                }
+                dispatch(addList(listDataObject));
                 setLoading(false);
                 setIsDialogOpen(false);
             } catch (error) {

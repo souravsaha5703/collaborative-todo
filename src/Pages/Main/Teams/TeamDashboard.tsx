@@ -5,83 +5,27 @@ import Sidebar from '../../../components/NavigationBars/Sidebar';
 import { Card } from "@/components/ui/card";
 import { Settings, Users, PlusCircle } from "lucide-react";
 import { useParams } from 'react-router-dom';
-import { database } from '@/Appwrite/appwriteConfig';
-import { Query, Models } from 'appwrite';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import CreateListDialog from '../../../components/DialogBoxes/CreateListDialog';
 import ListCards from '@/components/Teams/ListCards';
 import useGetTeamData from '@/hooks/useGetTeamData';
-
-interface TeamInterface {
-    id: string;
-    team_name: string;
-    team_description: string;
-    createdBy: string;
-    invite_code: string;
-    createdAt: string;
-    memberCount: number;
-    role?: string;
-}
-
-interface ListInterface {
-    id: string;
-    list_name: string;
-    team_id: string;
-    createdBy: string;
-}
+import useGetLists from '@/hooks/useGetLists';
 
 const TeamDashboard: React.FC = () => {
     const [isCreateListDialogBoxOpen, setIsCreateListDialogBoxOpen] = useState<boolean>(false);
-    const [teamData, setTeamData] = useState<TeamInterface | null>(null);
-    const [lists, setLists] = useState<ListInterface[]>([]);
+    const [userRole, setUserRole] = useState<string>('');
     const { team_id } = useParams();
     const user = useAppSelector((state) => state.user.currentUser);
-    useGetTeamData(team_id);
+    useGetTeamData(team_id ?? "");
+    useGetLists(team_id ?? "");
+    const team = useAppSelector((state) => state.team.currentTeam);
+    const lists = useAppSelector((state) => state.list.lists);
 
     useEffect(() => {
-        const fetchTeamsData = async () => {
-            const teamsData = await database.listDocuments(
-                import.meta.env.VITE_APPWRITE_TODO_DB_ID,
-                import.meta.env.VITE_APPWRITE_TEAMS_COLLECTION_ID,
-                [Query.equal('$id', team_id ?? "")]
-            );
-
-            let userRole = teamsData.documents[0].members.map((member: Models.Document) => member.user_id.$id == user?.id ? member.role : "");
-
-            setTeamData(prevData => ({
-                ...prevData,
-                id: team_id ?? "",
-                team_name: teamsData.documents[0].team_name,
-                team_description: teamsData.documents[0].team_description,
-                createdBy: teamsData.documents[0].createdBy,
-                invite_code: teamsData.documents[0].invite_code,
-                createdAt: teamsData.documents[0].$createdAt,
-                memberCount: teamsData.documents[0].members.length,
-                role: userRole
-            }));
+        if (team) {
+            let currentUserRole = team.members.map((member) => member.user_id == user?.id ? member.role : "");
+            setUserRole(currentUserRole[0]);
         }
-
-        const fetchListsData = async () => {
-            const listsData = await database.listDocuments(
-                import.meta.env.VITE_APPWRITE_TODO_DB_ID,
-                import.meta.env.VITE_APPWRITE_LISTS_COLLECTION_ID,
-                [Query.equal('team_id', team_id ?? "")]
-            );
-
-            listsData.documents.forEach((data) => {
-                let dataObject: ListInterface = {
-                    id: data.$id,
-                    list_name: data.list_name,
-                    team_id: data.$id,
-                    createdBy: data.createdBy,
-                }
-
-                setLists((prev) => [...prev, dataObject]);
-            });
-        }
-
-        fetchTeamsData();
-        fetchListsData();
     }, [team_id]);
 
     const handleCreateListBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -97,8 +41,10 @@ const TeamDashboard: React.FC = () => {
                     <div className="w-full flex items-start justify-between">
                         <div className='flex flex-col gap-1'>
                             <div className="flex items-center gap-4">
-                                <h1 className="text-3xl font-noto font-bold tracking-tight">{teamData?.team_name}</h1>
-                                <Badge variant="outline" className='font-noto'>{teamData?.role}</Badge>
+                                <h1 className="text-3xl font-noto font-bold tracking-tight">{team?.team_name}</h1>
+                                <Badge variant="outline" className='font-noto'>
+                                    {userRole}
+                                </Badge>
                             </div>
                             <p className="text-muted-foreground font-noto">Collaboration on ui ux</p>
                         </div>
@@ -114,11 +60,11 @@ const TeamDashboard: React.FC = () => {
                         </div>
                     </div>
                     <h1 className="text-xl font-noto font-medium text-start">Todo Lists</h1>
-                    {lists.length == 0 && teamData?.role == "member" ? (
+                    {lists.length == 0 && userRole == "member" ? (
                         <div className='w-full flex items-center justify-center'>
                             <h2>No Lists created yet</h2>
                         </div>
-                    ) : lists.length == 0 && teamData?.role == "admin" ? (
+                    ) : lists.length == 0 && userRole == "admin" ? (
                         <div className='flex flex-wrap gap-4'>
                             <Card className="w-[320px] flex flex-col items-center justify-center p-2 text-center">
                                 <div className="rounded-full bg-muted p-2">
@@ -144,7 +90,7 @@ const TeamDashboard: React.FC = () => {
                                     />
                                 )
                             })}
-                            {teamData?.role == "admin" && (
+                            {userRole == "admin" && (
                                 <Card className="w-[320px] flex flex-col items-center justify-center p-2 text-center">
                                     <div className="rounded-full bg-muted p-2">
                                         <PlusCircle className="h-4 w-4 text-muted-foreground" />
@@ -160,7 +106,7 @@ const TeamDashboard: React.FC = () => {
                     )}
                 </div>
             </div>
-            <CreateListDialog isDialogOpen={isCreateListDialogBoxOpen} setIsDialogOpen={setIsCreateListDialogBoxOpen} createdBy={user?.id} teamId={teamData?.id} />
+            <CreateListDialog isDialogOpen={isCreateListDialogBoxOpen} setIsDialogOpen={setIsCreateListDialogBoxOpen} createdBy={user?.id} teamId={team?.id} />
         </>
     )
 }
