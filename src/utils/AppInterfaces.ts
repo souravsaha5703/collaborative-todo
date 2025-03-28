@@ -48,3 +48,19 @@ export interface List {
     createdBy: string;
     createdAt: string;
 }
+
+export interface AvatarDetails {
+    imageUrl: string;
+}
+
+export interface TeamsInterface {
+    id: string;
+    team_name: string;
+    team_description: string;
+    createdBy: string;
+    invite_code: string;
+    createdAt: string;
+    memberCount: number;
+    role: string;
+    avatars: AvatarDetails[];
+}

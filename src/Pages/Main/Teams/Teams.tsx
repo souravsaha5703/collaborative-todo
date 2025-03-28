@@ -6,93 +6,16 @@ import TeamCards from '@/components/Teams/TeamCards';
 import CreateTeamDialog from '@/components/DialogBoxes/CreateTeamDialog';
 import JoinTeamDialog from '@/components/DialogBoxes/JoinTeamDialog';
 import { useAppSelector } from '@/hooks/redux-hooks';
-import { database, storage } from '@/Appwrite/appwriteConfig';
-import { Models, Query } from 'appwrite';
 import Loader from '@/components/Loaders/Loader';
-
-interface AvatarDetails {
-    imageUrl: string
-}
-
-interface TeamInterface {
-    id: string;
-    team_name: string;
-    team_description: string;
-    createdBy: string;
-    invite_code: string;
-    createdAt: string;
-    memberCount: number;
-    role: string;
-    avatars: AvatarDetails[]
-}
+import useGetAllTeams from '@/hooks/useGetAllTeams';
 
 const Teams: React.FC = () => {
     const [isCreateTeamDialogBoxOpen, setIsCreateTeamDialogBoxOpen] = useState<boolean>(false);
     const [isJoinTeamDialogBoxOpen, setIsJoinTeamDialogBoxOpen] = useState<boolean>(false);
-    const [teamExists, setTeamExists] = useState<boolean>(true);
-    const [teams, setTeams] = useState<TeamInterface[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
     const user = useAppSelector((state) => state.user.currentUser);
-
-    useEffect(() => {
-        const getTeams = async () => {
-            if (user?.id) {
-                const memberships = await database.listDocuments(
-                    import.meta.env.VITE_APPWRITE_TODO_DB_ID,
-                    import.meta.env.VITE_APPWRITE_MEMBERS_COLLECTION_ID,
-                    [Query.equal('user_id', user.id)]
-                );
-
-                if (memberships.documents.length > 0) {
-                    setTeamExists(true);
-                    const allTeams = memberships.documents.map(membership => membership.team_id);
-                    const teamIds: string[] = [];
-                    allTeams.forEach(team => {
-                        teamIds.push(team.$id);
-                    });
-
-                    const queries = teamIds.map(id => Query.equal('$id', id));
-
-                    if (teamIds.length > 0) {
-                        const teamsData = await database.listDocuments(
-                            import.meta.env.VITE_APPWRITE_TODO_DB_ID,
-                            import.meta.env.VITE_APPWRITE_TEAMS_COLLECTION_ID,
-                            queries
-                        );
-
-                        teamsData.documents.forEach(async (data) => {
-                            let userRole = data.members.map((member: Models.Document) => member.user_id.$id == user.id ? member.role : "");
-                            let membersAvatarIds = data.members.map((member: Models.Document) => member.user_id.profileImage);
-                            const membersAvatar: AvatarDetails[] = [];
-                            membersAvatarIds.forEach((id: string) => {
-                                const imageUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_PROFILE_IMAGE_BUCKET_ID, id);
-                                membersAvatar.push({
-                                    imageUrl: imageUrl
-                                });
-                            });
-                            let dataObject: TeamInterface = {
-                                id: data.$id,
-                                team_name: data.team_name,
-                                team_description: data.team_description,
-                                createdBy: data.createdBy,
-                                invite_code: data.invite_code,
-                                createdAt: data.$createdAt,
-                                memberCount: data.members.length,
-                                role: userRole,
-                                avatars: membersAvatar
-                            }
-                            setTeams((prev) => [...prev, dataObject]);
-                        });
-                    }
-                } else {
-                    setTeamExists(false);
-                }
-            }
-        }
-
-        getTeams();
-    }, []);
+    const teamExists = useGetAllTeams(user?.id ?? "");
+    const teams = useAppSelector((state) => state.team.allTeams);
 
     useEffect(() => {
         setTimeout(() => {
