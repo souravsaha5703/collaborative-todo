@@ -7,7 +7,8 @@ import Todos from '@/components/TodoCards/Todos';
 import { cardBgColorGenerator } from '@/utils/cardBgColorGenerator';
 import noTodoPic from '@/assets/images/no todo pic.png';
 import { Todos as TodoInterface } from '@/utils/AppInterfaces';
-import Loader from '@/components/Loaders/Loader';
+import Lottie from "lottie-react";
+import taskLoader from "@/assets/lottie/taskLoaderAnimation.json";
 import { database } from '@/Appwrite/appwriteConfig';
 import { updateTodoStatus } from '@/features/Todo/todoSlice';
 import TodoCardDialog from '@/components/DialogBoxes/TodoCardDialog';
@@ -111,7 +112,7 @@ const AllTodos: React.FC = () => {
                     <h1 className='font-noto text-4xl font-medium text-start text-gray-900 dark:text-gray-200 max-[425px]:text-3xl'>All Upcoming Tasks</h1>
                     {loading ? (
                         <div className='w-full py-5 px-1 flex items-center justify-center'>
-                            <Loader />
+                            <Lottie animationData={taskLoader} />
                         </div>
                     ) : (
                         <div className='w-full py-5 px-1 flex flex-wrap gap-5 items-center max-[950px]:justify-center'>
@@ -142,7 +143,7 @@ const AllTodos: React.FC = () => {
                     <h2 className='font-noto text-3xl font-normal text-start mt-4 text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>All Incomplete Tasks</h2>
                     {loading ? (
                         <div className='w-full py-5 px-1 flex items-center justify-center'>
-                            <Loader />
+                            <Lottie animationData={taskLoader} />
                         </div>
                     ) : (
                         <div className='w-full py-5 px-1 flex flex-wrap gap-5 items-center max-[950px]:justify-center'>
@@ -173,7 +174,7 @@ const AllTodos: React.FC = () => {
                     <h2 className='font-noto text-3xl font-normal text-start mt-4 text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>All Completed Tasks</h2>
                     {loading ? (
                         <div className='w-full py-5 px-1 flex items-center justify-center'>
-                            <Loader />
+                            <Lottie animationData={taskLoader} />
                         </div>
                     ) : (
                         <div className='w-full py-5 px-1 flex flex-wrap gap-5 items-center max-[950px]:justify-center'>

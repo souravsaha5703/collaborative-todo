@@ -6,7 +6,8 @@ import TeamCards from '@/components/Teams/TeamCards';
 import CreateTeamDialog from '@/components/DialogBoxes/CreateTeamDialog';
 import JoinTeamDialog from '@/components/DialogBoxes/JoinTeamDialog';
 import { useAppSelector } from '@/hooks/redux-hooks';
-import Loader from '@/components/Loaders/Loader';
+import Lottie from "lottie-react";
+import loaderAnimation from "@/assets/lottie/loadingAnimation.json";
 import useGetAllTeams from '@/hooks/useGetAllTeams';
 
 const Teams: React.FC = () => {
@@ -50,7 +51,7 @@ const Teams: React.FC = () => {
                     </div>
                     {loading ? (
                         <div className='w-full py-5 px-1 flex items-center justify-center'>
-                            <Loader />
+                            <Lottie animationData={loaderAnimation} />
                         </div>
                     ) : (
                         <div>

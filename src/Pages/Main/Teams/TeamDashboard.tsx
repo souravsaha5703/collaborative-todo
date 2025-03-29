@@ -10,7 +10,8 @@ import CreateListDialog from '../../../components/DialogBoxes/CreateListDialog';
 import ListCards from '@/components/Teams/ListCards';
 import useGetTeamData from '@/hooks/useGetTeamData';
 import useGetLists from '@/hooks/useGetLists';
-import Loader from '@/components/Loaders/Loader';
+import Lottie from "lottie-react";
+import dataLoaderAnimation from "@/assets/lottie/dataLoaderAnimation.json";
 
 const TeamDashboard: React.FC = () => {
     const [isCreateListDialogBoxOpen, setIsCreateListDialogBoxOpen] = useState<boolean>(false);
@@ -52,8 +53,8 @@ const TeamDashboard: React.FC = () => {
             <Sidebar />
             <div className='md:ml-20 p-5 bg-background'>
                 {loading ? (
-                    <div className='w-full py-5 px-1 flex items-center justify-center'>
-                        <Loader />
+                    <div className='w-full py-5 px-1 flex items-center justify-center mt-10'>
+                        <Lottie animationData={dataLoaderAnimation} />
                     </div>
                 ) : (
                     <div className='w-full p-2 flex flex-col gap-4'>
