@@ -26,7 +26,7 @@ const AppRouter = () => {
                         <Route path='analytics' element={<TodoAnalytics />} />
                         <Route path='teams' element={<Teams />} />
                         <Route path='teams/team_dashboard/:team_id' element={<TeamDashboard />} />
-                        <Route path='teams/team_dashboard/members' element={<TeamMembers />} />
+                        <Route path='teams/team_dashboard/:team_id/members' element={<TeamMembers />} />
                         <Route path='profile' element={<Profile />} />
                     </Route>
                 </Route>

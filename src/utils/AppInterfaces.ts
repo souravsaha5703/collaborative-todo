@@ -29,6 +29,9 @@ export interface Members {
     role: string;
     joined_at: string;
     user_id: string;
+    user_name: string;
+    user_email: string;
+    user_avatar: string;
 }
 
 export interface Team {

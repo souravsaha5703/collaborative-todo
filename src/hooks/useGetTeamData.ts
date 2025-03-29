@@ -4,6 +4,7 @@ import { database } from "@/Appwrite/appwriteConfig";
 import { Query, Models } from "appwrite";
 import { Team as TeamInterface, Members } from "@/utils/AppInterfaces";
 import { addTeam } from "@/features/Teams/teamSlice";
+import { storage } from "@/Appwrite/appwriteConfig";
 
 const useGetTeamData = (teamId: string): void => {
     const dispatch = useAppDispatch();
@@ -19,10 +20,14 @@ const useGetTeamData = (teamId: string): void => {
                 const teamMembers: Members[] = [];
 
                 teamData.documents[0].members.forEach((member: Models.Document) => {
+                    const imageUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_PROFILE_IMAGE_BUCKET_ID, member.user_id.profileImage);
                     teamMembers.push({
                         id: member.$id,
                         team_id: teamId,
                         user_id: member.user_id.$id,
+                        user_name: member.user_id.fullname,
+                        user_email: member.user_id.email,
+                        user_avatar: imageUrl,
                         joined_at: member.joined_at,
                         role: member.role
                     });
