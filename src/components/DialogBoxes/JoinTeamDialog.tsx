@@ -34,7 +34,7 @@ const JoinTeamDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }
         setLoading(true);
         if (code == '') {
             setErrorOccur(true);
-            setError("Please enter a valid team name");
+            setError("Please enter a valid team code");
             setLoading(false);
         } else {
             try {
@@ -53,30 +53,31 @@ const JoinTeamDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen }
 
                 const result = verifyCode.documents[0];
 
-                if(user?.id && result.team_id){
+                if(user?.id){
                     const checkExistingUser = await database.listDocuments(
                         import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                         import.meta.env.VITE_APPWRITE_MEMBERS_COLLECTION_ID,
                         [
-                            Query.equal('team_id', result.team_id),
+                            Query.equal('team_id', result?.$id),
                             Query.equal('user_id', user.id)
                         ]
                     );
     
                     if (checkExistingUser.documents.length) {
-                        console.log("hehe");
                         setErrorOccur(true);
                         setError("You are already a member of this team");
                         setLoading(false);
                         return;
                     }
+
+                    console.log(user.id);
     
                     await database.createDocument(
                         import.meta.env.VITE_APPWRITE_TODO_DB_ID,
                         import.meta.env.VITE_APPWRITE_MEMBERS_COLLECTION_ID,
                         ID.unique(), {
-                        team_id: result.team_id,
-                        user_id: user?.id,
+                        team_id: result.$id,
+                        user_id: user.id,
                         role: 'member',
                         joined_at: new Date()
                     });
