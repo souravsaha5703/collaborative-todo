@@ -31,7 +31,7 @@ export interface Members {
     user_id: string;
     user_name: string;
     user_email: string;
-    user_avatar: string;
+    user_avatar?: string;
 }
 
 export interface Team {
@@ -66,4 +66,18 @@ export interface TeamsInterface {
     memberCount: number;
     role: string;
     avatars: AvatarDetails[];
+}
+
+export interface TeamTodosInterface {
+    id: string;
+    task: string;
+    priority: string;
+    task_status: boolean;
+    createdBy: string | undefined;
+    task_due_date: string;
+    task_completed_date?: string;
+    task_created?: string;
+    list_id: List;
+    assigned_to: Members;
+    task_updated_at?: string;
 }
