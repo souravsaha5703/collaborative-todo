@@ -16,13 +16,13 @@ import dataLoaderAnimation from "@/assets/lottie/dataLoaderAnimation.json";
 const TeamDashboard: React.FC = () => {
     const [isCreateListDialogBoxOpen, setIsCreateListDialogBoxOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    const [userRole, setUserRole] = useState<string | string[]>('');
     const { team_id } = useParams();
     const user = useAppSelector((state) => state.user.currentUser);
     useGetTeamData(team_id ?? "");
     useGetLists(team_id ?? "");
     const team = useAppSelector((state) => state.team.currentTeam);
     const lists = useAppSelector((state) => state.list.lists);
+    const member = useAppSelector((state) => state.member.currentMember);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,13 +30,6 @@ const TeamDashboard: React.FC = () => {
             setLoading(false);
         }, 2000);
     }, []);
-
-    useEffect(() => {
-        if (team) {
-            let currentUserRole = team.members.map((member) => member.user_id == user?.id ? member.role : "");
-            setUserRole(currentUserRole);
-        }
-    }, [team]);
 
     const handleCreateListBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -63,7 +56,7 @@ const TeamDashboard: React.FC = () => {
                                 <div className="flex items-center gap-4">
                                     <h1 className="text-3xl font-noto font-bold tracking-tight">{team?.team_name}</h1>
                                     <Badge variant="outline" className='font-noto'>
-                                        {userRole}
+                                        {member?.role}
                                     </Badge>
                                 </div>
                                 <p className="text-muted-foreground font-noto">Collaboration on ui ux</p>
@@ -80,11 +73,11 @@ const TeamDashboard: React.FC = () => {
                             </div>
                         </div>
                         <h1 className="text-xl font-noto font-medium text-start">Todo Lists</h1>
-                        {lists.length == 0 && userRole == "member" ? (
+                        {lists.length == 0 && member?.role == "member" ? (
                             <div className='w-full flex items-center justify-center'>
                                 <h2>No Lists created yet</h2>
                             </div>
-                        ) : lists.length == 0 && userRole == "admin" ? (
+                        ) : lists.length == 0 && member?.role == "admin" ? (
                             <div className='flex flex-wrap gap-4'>
                                 <Card className="w-[320px] flex flex-col items-center justify-center p-2 text-center">
                                     <div className="rounded-full bg-muted p-2">
@@ -110,7 +103,7 @@ const TeamDashboard: React.FC = () => {
                                         />
                                     )
                                 })}
-                                {userRole == "admin" && (
+                                {member?.role == "admin" && (
                                     <Card className="w-[320px] flex flex-col items-center justify-center p-2 text-center">
                                         <div className="rounded-full bg-muted p-2">
                                             <PlusCircle className="h-4 w-4 text-muted-foreground" />

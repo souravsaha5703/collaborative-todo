@@ -1,12 +1,14 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "./redux-hooks";
+import { useAppDispatch, useAppSelector } from "./redux-hooks";
 import { database } from "@/Appwrite/appwriteConfig";
 import { Query, Models } from "appwrite";
 import { Team as TeamInterface, Members } from "@/utils/AppInterfaces";
 import { addTeam } from "@/features/Teams/teamSlice";
+import { addMember } from "@/features/Teams/memberSlice";
 import { storage } from "@/Appwrite/appwriteConfig";
 
 const useGetTeamData = (teamId: string): void => {
+    const user = useAppSelector((state) => state.user.currentUser);
     const dispatch = useAppDispatch();
     useEffect(() => {
         const fetchTeamInfo = async () => {
@@ -31,6 +33,18 @@ const useGetTeamData = (teamId: string): void => {
                         joined_at: member.joined_at,
                         role: member.role
                     });
+                    if (member.user_id.$id == user?.id) {
+                        dispatch(addMember({
+                            id: member.$id,
+                            team_id: teamId,
+                            user_id: member.user_id.$id,
+                            user_name: member.user_id.fullname,
+                            user_email: member.user_id.email,
+                            user_avatar: imageUrl,
+                            joined_at: member.joined_at,
+                            role: member.role
+                        }));
+                    }
                 });
 
                 const teamObject: TeamInterface = {

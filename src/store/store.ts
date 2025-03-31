@@ -5,6 +5,7 @@ import todoReducer from '@/features/Todo/todoSlice';
 import teamReducer from '@/features/Teams/teamSlice';
 import listReducer from '@/features/Teams/listSlice';
 import teamTodoReducer from '@/features/Teams/teamTodoSlice';
+import memberReducer from '@/features/Teams/memberSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     team: teamReducer,
     list: listReducer,
     teamTodo: teamTodoReducer,
+    member: memberReducer,
   },
 })
 
