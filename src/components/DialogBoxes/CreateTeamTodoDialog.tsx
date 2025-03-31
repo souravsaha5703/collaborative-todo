@@ -197,6 +197,7 @@ const CreateTeamTodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDi
                                             <SelectItem key={index} value={member.id}>{member.user_name}</SelectItem>
                                         )
                                     })}
+                                    <SelectItem value="none">None</SelectItem>
                                 </SelectContent>
                             </Select>
                             {errorOccur && <p className='font-noto text-start font-normal text-base text-red-500'>{error}</p>}

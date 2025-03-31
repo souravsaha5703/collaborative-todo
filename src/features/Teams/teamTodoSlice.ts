@@ -18,10 +18,13 @@ export const teamTodoSlice = createSlice({
         addTodo: (state, action: PayloadAction<TeamTodosInterface>) => {
             state.teamTodos.push(action.payload);
         },
+        addAllTodos: (state, action: PayloadAction<TeamTodosInterface[]>) => {
+            state.teamTodos = action.payload;
+        }
     }
 });
 
-export const { addTodo } = teamTodoSlice.actions;
+export const { addTodo, addAllTodos } = teamTodoSlice.actions;
 
 export const selectTeamTodos = (state: RootState) => state.teamTodo.teamTodos;
 

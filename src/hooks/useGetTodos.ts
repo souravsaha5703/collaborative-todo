@@ -33,7 +33,7 @@ const useGetTodos = () => {
                         task_status: todo.task_status,
                         createdBy: todo.createdBy.$id,
                         completion_date: formatToIndianTime(todo.completion_date),
-                        task_completed_date: formatToIndianTime(todo.task_completed_date),
+                        task_completed_date: (todo.task_completed_date == null ? "" : formatToIndianTime(todo.task_completed_date)),
                         task_created: todo.$createdAt
                     });
                 });
