@@ -11,7 +11,7 @@ import ListCards from '@/components/Teams/ListCards';
 import useGetTeamData from '@/hooks/useGetTeamData';
 import useGetLists from '@/hooks/useGetLists';
 import Lottie from "lottie-react";
-import dataLoaderAnimation from "@/assets/lottie/dataLoaderAnimation.json";
+import dataLoaderAnimation from "@/assets/lottie/loadingAnimation.json";
 
 const TeamDashboard: React.FC = () => {
     const [isCreateListDialogBoxOpen, setIsCreateListDialogBoxOpen] = useState<boolean>(false);
