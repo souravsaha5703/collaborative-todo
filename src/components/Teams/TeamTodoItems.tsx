@@ -11,20 +11,22 @@ import { motion } from 'framer-motion';
 import { useAppSelector } from '@/hooks/redux-hooks';
 
 interface TodoCardProps {
-    task: string,
-    priority: string,
-    completion_date: string,
+    task: string;
+    priority: string;
+    completion_date: string;
     assignedMemberId: string;
     assignedMemberName: string;
     taskCompletedDate?: string,
-    color?: string,
-    onEditClick?: React.MouseEventHandler<SVGSVGElement>,
-    onCompleteClick?: React.MouseEventHandler<SVGSVGElement>,
-    onCardClick?: React.MouseEventHandler<HTMLHeadingElement>
+    color?: string;
+    createdBy?: string | undefined;
+    onEditClick?: React.MouseEventHandler<SVGSVGElement>;
+    onCompleteClick?: React.MouseEventHandler<SVGSVGElement>;
+    onCardClick?: React.MouseEventHandler<HTMLHeadingElement>;
 }
 
-const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_date, assignedMemberId, assignedMemberName, color, taskCompletedDate, onEditClick, onCompleteClick, onCardClick }) => {
+const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_date, assignedMemberId, assignedMemberName, color, taskCompletedDate, createdBy, onEditClick, onCompleteClick, onCardClick }) => {
     const teamData = useAppSelector((state) => state.team.currentTeam);
+    const member = useAppSelector((state) => state.member.currentMember);
     const today: Date = new Date();
     const taskDate: Date = new Date(completion_date);
 
@@ -108,7 +110,7 @@ const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_dat
                         <></>
                     )}
                     <div className='w-full flex items-center justify-end gap-2 z-20'>
-                        {onEditClick ? (
+                        {onEditClick && createdBy == member?.id ? (
                             <FilePenLine onClick={onEditClick} className='text-[#FF8A65] text-sm cursor-pointer' />
                         ) : (
                             <></>

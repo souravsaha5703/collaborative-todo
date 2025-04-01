@@ -61,19 +61,23 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                 <div className='flex flex-col'>
                     <h3 className="text-3xl mb-2 font-noto text-start font-medium">{teamTodo?.task}</h3>
                     {teamTodo?.task_status == true ? (
-                        <Badge
-                            variant="outline"
-                            className="bg-green-400 w-16 font-noto text-xs font-normal text-green-700 border-green-400"
-                        >
-                            Completed
-                        </Badge>
+                        <span>
+                            <Badge
+                                variant="outline"
+                                className="bg-green-400 font-noto text-xs font-normal text-green-700 border-green-400"
+                            >
+                                Completed
+                            </Badge>
+                        </span>
                     ) : (
-                        <Badge
-                            variant="outline"
-                            className="bg-yellow-300 w-16 font-noto text-xs font-normal text-yellow-700 border-yellow-300"
-                        >
-                            Pending
-                        </Badge>
+                        <span>
+                            <Badge
+                                variant="outline"
+                                className="bg-yellow-300 font-noto text-xs font-normal text-yellow-700 border-yellow-300"
+                            >
+                                Pending
+                            </Badge>
+                        </span>
                     )}
                 </div>
                 <div className="space-y-3 rounded-lg border p-3">
