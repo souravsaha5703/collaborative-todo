@@ -9,3 +9,8 @@ export const verifyFullName = (name: string): boolean => {
 
     return fullNameRegex.test(name);
 }
+
+export const safeNumber = (str: string): number => {
+    const num = Number(str);
+    return isNaN(num) ? Math.random() : num;
+}

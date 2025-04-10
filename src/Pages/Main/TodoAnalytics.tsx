@@ -13,6 +13,7 @@ import { calculateChartData } from '@/controllers/calculateChartData';
 import { calculateTaskDistribution, calculateTaskStatus } from '@/controllers/calculatePichartData';
 import { calculateProductivityScore } from '@/controllers/calculateProductivityscore';
 import RenderCustomizedLabel from '@/components/ui/pieChartLabel';
+import { safeNumber } from '@/utils/verifyFormat';
 
 const chartConfig = {
     taskCreated: {
@@ -91,7 +92,7 @@ const TodoAnalytics: React.FC = () => {
                             </CardHeader>
                             <CardContent>
                                 <div className='flex gap-1'>
-                                    <NumberTicker value={Number(taskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <NumberTicker value={safeNumber(taskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
                                     <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">%</span>
                                 </div>
                             </CardContent>
@@ -103,7 +104,7 @@ const TodoAnalytics: React.FC = () => {
                             </CardHeader>
                             <CardContent>
                                 <div className='flex gap-1'>
-                                    <NumberTicker value={Number(avgCompletionTime)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <NumberTicker value={safeNumber(avgCompletionTime)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
                                     <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">Days</span>
                                 </div>
                             </CardContent>
@@ -127,7 +128,7 @@ const TodoAnalytics: React.FC = () => {
                             </CardHeader>
                             <CardContent>
                                 <div className='flex gap-1'>
-                                    <NumberTicker value={Number(onTimeTaskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
+                                    <NumberTicker value={safeNumber(onTimeTaskCompletionRate)} className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50" />
                                     <span className="text-3xl font-noto font-semibold text-gray-950 dark:text-gray-50">%</span>
                                 </div>
                             </CardContent>
