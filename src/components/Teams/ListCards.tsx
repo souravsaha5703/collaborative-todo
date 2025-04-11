@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import { database } from '@/Appwrite/appwriteConfig';
+import { Query } from 'appwrite';
 
 interface ListCardProps {
     id: string;
@@ -11,9 +13,28 @@ interface ListCardProps {
 }
 
 const ListCards: React.FC<ListCardProps> = ({ id, list_name, team_id, createdBy }) => {
+    const [totalTasks, setTotalTasks] = useState<number>(0);
+    const [completedTasks, setCompletedTasks] = useState<number>(0);
     const navigate = useNavigate();
 
-    const handleViewTaskBtn = (list_id:string) => {
+    useEffect(() => {
+        const fetchTodos = async () => {
+            const result = await database.listDocuments(
+                import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                import.meta.env.VITE_APPWRITE_TEAM_TODOS_COLLECTION_ID,
+                [
+                    Query.equal('list_id', id),
+                ]
+            );
+
+            setTotalTasks(result.documents.length);
+            setCompletedTasks((result.documents.filter(todo => todo.task_status == true)).length);
+        }
+
+        fetchTodos();
+    }, [id]);
+
+    const handleViewTaskBtn = (list_id: string) => {
         navigate(`/user/teams/team_dashboard/${team_id}/${list_id}/todos`);
     }
 
@@ -22,14 +43,14 @@ const ListCards: React.FC<ListCardProps> = ({ id, list_name, team_id, createdBy 
             <CardHeader className="pb-2">
                 <CardTitle className='font-noto text-2xl font-semibold'>{list_name}</CardTitle>
                 <CardDescription className='font-noto text-base font-normal'>
-                    5 of 12 tasks completed
+                    {completedTasks} of {totalTasks} tasks completed
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="h-2 w-full rounded-full bg-muted">
                     <div
                         className="h-full rounded-full bg-primary"
-                        style={{ width: `${.2 * 100}%` }}
+                        style={{ width: `${(completedTasks / totalTasks) * 100}%` }}
                     />
                 </div>
                 <div className="mt-4">
