@@ -46,7 +46,7 @@ const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_dat
                 ease: [0, 0.71, 0.2, 1.01],
             }}
         >
-            <Card className={`w-full ${color} overflow-hidden border-0 rounded-xl`}>
+            <Card className={`w-full ${color} overflow-hidden border-0 rounded-xl max-[375px]:w-full`}>
                 <CardHeader className="pb-0 pt-4 px-4">
                     <div className="flex items-center gap-2">
                         <span>
@@ -83,8 +83,8 @@ const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_dat
                     </div>
                 </CardHeader>
                 <CardContent className="pt-2 px-4 pb-4">
-                    <h3 className="text-3xl font-noto text-start font-medium text-gray-950 cursor-pointer" onClick={onCardClick}>{task}</h3>
-                    <p className="text-lg font-normal font-noto text-gray-800 mb-1">Due Date - {completion_date}</p>
+                    <h3 className="text-3xl font-noto text-start font-medium text-gray-950 cursor-pointer truncate max-[560px]:text-xl" onClick={onCardClick}>{task}</h3>
+                    <p className="text-lg font-normal font-noto text-gray-800 mb-1 max-[560px]:text-base max-[390px]:text-sm">Due Date - {completion_date}</p>
                     {assignedMemberName == "none" ? (
                         <></>
                     ) : (
@@ -100,12 +100,12 @@ const TeamTodoItems: React.FC<TodoCardProps> = ({ task, priority, completion_dat
                                         .join("")}
                                 </AvatarFallback>
                             </Avatar>
-                            <p className="text-lg font-normal font-noto text-gray-800 mb-1">Assign To - {assignedMemberName}</p>
+                            <p className="text-lg font-normal font-noto text-gray-800 mb-1 max-[560px]:text-base max-[390px]:text-sm">Assign To - {assignedMemberName}</p>
                         </div>
                     )}
 
                     {taskCompletedDate ? (
-                        <p className="text-lg font-normal font-noto text-gray-800">Completed On - {taskCompletedDate}</p>
+                        <p className="text-lg font-normal font-noto text-gray-800 max-[560px]:text-base max-[375px]:text-sm">Completed On - {taskCompletedDate}</p>
                     ) : (
                         <></>
                     )}

@@ -101,19 +101,19 @@ const TeamTodos: React.FC = () => {
                     </div>
                 ) : (
                     <div className='w-full p-2 flex flex-col gap-4'>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between max-[425px]:flex-col max-[425px]:items-start max-[425px]:gap-2">
                             <div>
-                                <h1 className="text-4xl font-noto font-bold tracking-tight">{listData?.list_name}</h1>
+                                <h1 className="text-4xl font-noto font-bold tracking-tight max-[425px]:text-2xl">{listData?.list_name}</h1>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Button onClick={handleAddTaskBtn} size='lg' className='w-32 h-10 text-base font-noto font-medium'><Plus /> Add Task</Button>
                             </div>
                         </div>
                         <Tabs defaultValue="all" className="mb-8">
-                            <TabsList>
-                                <TabsTrigger value="all" className='font-noto'>All Tasks ({teamTodos.length})</TabsTrigger>
-                                <TabsTrigger value="pending" className='font-noto'>Pending ({pendingTodos.length})</TabsTrigger>
-                                <TabsTrigger value="completed" className='font-noto'>Completed ({completedTodos.length})</TabsTrigger>
+                            <TabsList className='max-[375px]:w-full max-[375px]:flex-col max-[375px]:h-auto'>
+                                <TabsTrigger value="all" className='font-noto max-[375px]:w-full'>All Tasks ({teamTodos.length})</TabsTrigger>
+                                <TabsTrigger value="pending" className='font-noto max-[375px]:w-full'>Pending ({pendingTodos.length})</TabsTrigger>
+                                <TabsTrigger value="completed" className='font-noto max-[375px]:w-full'>Completed ({completedTodos.length})</TabsTrigger>
                             </TabsList>
 
 

@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Sidebar from '../../../components/NavigationBars/Sidebar';
 import { Card } from "@/components/ui/card";
-import { Settings, Users, PlusCircle } from "lucide-react";
+import { Settings, Users, PlusCircle, MoreVertical } from "lucide-react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import CreateListDialog from '../../../components/DialogBoxes/CreateListDialog';
@@ -12,10 +12,17 @@ import useGetTeamData from '@/hooks/useGetTeamData';
 import useGetLists from '@/hooks/useGetLists';
 import Lottie from "lottie-react";
 import dataLoaderAnimation from "@/assets/lottie/loadingAnimation.json";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 const TeamDashboard: React.FC = () => {
     const [isCreateListDialogBoxOpen, setIsCreateListDialogBoxOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
+    const [isSmallScreen, setIsSmallScreen] = useState(false);
     const { team_id } = useParams();
     const user = useAppSelector((state) => state.user.currentUser);
     useGetTeamData(team_id ?? "");
@@ -29,6 +36,15 @@ const TeamDashboard: React.FC = () => {
         setTimeout(() => {
             setLoading(false);
         }, 2000);
+    }, []);
+
+    useEffect(() => {
+        const checkScreenSize = () => {
+            setIsSmallScreen(window.innerWidth < 815);
+        };
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
     const handleCreateListBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -50,27 +66,51 @@ const TeamDashboard: React.FC = () => {
                         <Lottie animationData={dataLoaderAnimation} />
                     </div>
                 ) : (
-                    <div className='w-full p-2 flex flex-col gap-4'>
+                    <div className='w-full p-2 flex flex-col gap-4 mb-10'>
                         <div className="w-full flex items-start justify-between">
                             <div className='flex flex-col gap-1'>
-                                <div className="flex items-center gap-4">
-                                    <h1 className="text-3xl font-noto font-bold tracking-tight">{team?.team_name}</h1>
+                                <div className="flex items-center gap-4 max-[425px]:flex-col-reverse max-[425px]:items-start max-[425px]:gap-2">
+                                    <h1 className="text-3xl font-noto font-bold tracking-tight max-[425px]:text-xl">{team?.team_name}</h1>
                                     <Badge variant="outline" className='font-noto'>
                                         {member?.role}
                                     </Badge>
                                 </div>
-                                <p className="text-muted-foreground font-noto">Collaboration on ui ux</p>
+                                <p className="text-muted-foreground text-base font-noto truncate mt-1 max-[375px]:w-60">{team?.team_description}</p>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Button onClick={handleMembersBtn} variant="outline" size="lg">
-                                    <Users className="mr-2 h-4 w-4" />
-                                    <span className='font-noto text-base font-medium'>Members</span>
-                                </Button>
-                                <Button variant="outline" size="lg">
-                                    <Settings className="mr-2 h-4 w-4" />
-                                    <span className='font-noto text-base font-medium'>Settings</span>
-                                </Button>
-                            </div>
+                            {isSmallScreen ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="icon">
+                                            <MoreVertical className="h-5 w-5" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem className="cursor-pointer">
+                                            <Button onClick={handleMembersBtn} variant="ghost" size="lg">
+                                                <Users className="mr-2 h-4 w-4" />
+                                                <span className='font-noto text-base font-medium'>Members</span>
+                                            </Button>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer">
+                                            <Button variant="ghost" size="lg">
+                                                <Settings className="mr-2 h-4 w-4" />
+                                                <span className='font-noto text-base font-medium'>Settings</span>
+                                            </Button>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <Button onClick={handleMembersBtn} variant="outline" size="lg">
+                                        <Users className="mr-2 h-4 w-4" />
+                                        <span className='font-noto text-base font-medium'>Members</span>
+                                    </Button>
+                                    <Button variant="outline" size="lg">
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        <span className='font-noto text-base font-medium'>Settings</span>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                         <h1 className="text-xl font-noto font-medium text-start">Todo Lists</h1>
                         {lists.length == 0 && member?.role == "member" ? (
@@ -91,7 +131,7 @@ const TeamDashboard: React.FC = () => {
                                 </Card>
                             </div>
                         ) : (
-                            <div className='flex flex-wrap gap-4'>
+                            <div className='flex flex-wrap gap-4 max-[720px]:items-center max-[720px]:justify-center'>
                                 {lists.map((list, index) => {
                                     return (
                                         <ListCards

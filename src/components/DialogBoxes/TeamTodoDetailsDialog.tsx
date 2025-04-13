@@ -31,7 +31,7 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className={`sm:max-w-[700px]`}>
+            <DialogContent className={`sm:max-w-[700px] max-[528px]:w-[400px] max-[375px]:w-[300px] max-[375px]:px-2`}>
                 <div className="flex items-center gap-2">
                     <span>
                         {teamTodo?.priority == '1st' ? (
@@ -59,7 +59,7 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                     </span>
                 </div>
                 <div className='flex flex-col'>
-                    <h3 className="text-3xl mb-2 font-noto text-start font-medium">{teamTodo?.task}</h3>
+                    <h3 className="text-3xl mb-2 font-noto text-start font-medium max-[510px]:text-2xl">{teamTodo?.task}</h3>
                     {teamTodo?.task_status == true ? (
                         <span>
                             <Badge
@@ -83,10 +83,10 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                 <div className="space-y-3 rounded-lg border p-3">
                     <div className="flex items-center gap-2 text-sm">
                         <UserPen className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Created by :</span>
+                        <span className="text-muted-foreground max-[375px]:text-xs">Created by :</span>
                         <div className='flex items-center gap-2'>
                             <Avatar
-                                className="size-10 cursor-pointer hover:ring-2 hover:ring-primary/50"
+                                className="size-10 cursor-pointer hover:ring-2 hover:ring-primary/50 max-[510px]:size-6"
                             >
                                 <AvatarImage src={creatorAvatar} alt={creatorName} />
                                 <AvatarFallback>
@@ -96,18 +96,18 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                                         .join("")}
                                 </AvatarFallback>
                             </Avatar>
-                            <p className="text-lg font-normal font-noto">{creatorName}</p>
+                            <p className="text-lg font-normal font-noto max-[510px]:text-base max-[375px]:text-xs">{creatorName}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                        <User className="h-4 w-4 text-muted-foreground" />
+                        <User className="h-4 w-4 text-muted-foreground max-[375px]:text-xs" />
                         <span className="text-muted-foreground">Assigned to :</span>
                         {teamTodo?.assigned_to.user_name == "none" ? (
                             <></>
                         ) : (
                             <div className='flex items-center gap-2'>
                                 <Avatar
-                                    className="size-10 cursor-pointer hover:ring-2 hover:ring-primary/50"
+                                    className="size-10 cursor-pointer hover:ring-2 hover:ring-primary/50 max-[510px]:size-6"
                                 >
                                     <AvatarImage src={userAvatar} alt={teamTodo?.assigned_to.user_name} />
                                     <AvatarFallback>
@@ -117,19 +117,19 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                                             .join("")}
                                     </AvatarFallback>
                                 </Avatar>
-                                <p className="text-lg font-normal font-noto">{teamTodo?.assigned_to.user_name}</p>
+                                <p className="text-lg font-normal font-noto max-[510px]:text-base max-[375px]:text-xs">{teamTodo?.assigned_to.user_name}</p>
                             </div>
                         )}
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Due date : </span>
-                        <p className="text-lg font-normal font-noto mb-1">{teamTodo?.task_due_date}</p>
+                        <span className="text-muted-foreground max-[375px]:text-xs">Due date : </span>
+                        <p className="text-lg font-normal font-noto mb-1 max-[510px]:text-base max-[375px]:text-xs max-[375px]:mb-0">{teamTodo?.task_due_date}</p>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Task Completed date : </span>
-                        <p className="text-lg font-normal font-noto mb-1">
+                        <span className="text-muted-foreground max-[375px]:text-xs">Task Completed date : </span>
+                        <p className="text-lg font-normal font-noto mb-1 max-[510px]:text-base max-[375px]:text-xs max-[375px]:mb-0">
                             {teamTodo?.task_completed_date == '' ? (
                                 "Not Yet Completed"
                             ) : (
@@ -142,8 +142,8 @@ const TeamTodoDetailsDialog: React.FC<DialogProps> = ({ teamTodo, isDialogOpen, 
                     ) : (
                         <div className="flex items-center gap-2 text-sm">
                             <Calendar className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-muted-foreground">Task Updated At: </span>
-                            <p className="text-lg font-normal font-noto mb-1">{teamTodo?.task_updated_at}</p>
+                            <span className="text-muted-foreground max-[375px]:text-xs">Task Updated At: </span>
+                            <p className="text-lg font-normal font-noto mb-1 max-[510px]:text-base max-[375px]:text-xs max-[375px]:mb-0">{teamTodo?.task_updated_at}</p>
                         </div>
                     )}
                 </div>

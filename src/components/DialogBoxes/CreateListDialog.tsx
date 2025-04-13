@@ -71,7 +71,7 @@ const CreateListDialog: React.FC<DialogProps> = ({ isDialogOpen, setIsDialogOpen
 
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent>
+            <DialogContent className='max-[528px]:w-[400px] max-[425px]:w-[300px]'>
                 <DialogHeader>
                     <DialogTitle className='font-noto text-2xl font-medium text-start'>Create a new list</DialogTitle>
                     <DialogDescription className='font-noto text-base font-normal text-start'>Create a list of related tasks.</DialogDescription>
