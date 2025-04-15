@@ -7,9 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Copy, Check } from "lucide-react";
 import { useAppSelector } from '@/hooks/redux-hooks';
 import { toast } from '@/hooks/use-toast';
+import MemberDetailsDialog from '@/components/DialogBoxes/MemberDetailsDialog';
+
+interface MemberInfo {
+    id: string;
+    avatarImg: string | undefined;
+    memberName: string;
+    memberEmail: string;
+    role: string;
+}
 
 const TeamMembers: React.FC = () => {
     const [isCopied, setIsCopied] = useState(false);
+    const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null);
+    const [isMemberDialogOpen, setIsMemberDialogOpen] = useState<boolean>(false);
     const teamData = useAppSelector((state) => state.team.currentTeam);
 
     const copyToClipboard = () => {
@@ -36,6 +47,18 @@ const TeamMembers: React.FC = () => {
                 });
             });
     };
+
+    const handleMemberDialog = (id: string, memberName: string, memberEmail: string, role: string, avatarImg: string | undefined) => {
+        setMemberInfo((prev) => ({
+            ...prev,
+            id: id,
+            memberName: memberName,
+            memberEmail: memberEmail,
+            avatarImg: avatarImg,
+            role: role
+        }));
+        setIsMemberDialogOpen(true);
+    }
 
     return (
         <>
@@ -93,9 +116,9 @@ const TeamMembers: React.FC = () => {
                                                         .join("")}
                                                 </AvatarFallback>
                                             </Avatar>
-                                            <div>
-                                                <p className="font-medium font-noto max-[487px]:text-sm max-[375px]:w-28 max-[375px]:truncate">{member.user_name}</p>
-                                                <p className="text-sm text-muted-foreground font-noto max-[375px]:w-28 max-[375px]:truncate">{member.user_email}</p>
+                                            <div onClick={() => handleMemberDialog(member.id, member.user_name, member.user_email, member.role, member.user_avatar)}>
+                                                <p className="font-medium font-noto cursor-pointer max-[487px]:text-sm max-[375px]:w-28 max-[375px]:truncate">{member.user_name}</p>
+                                                <p className="text-sm text-muted-foreground font-noto cursor-pointer max-[375px]:w-28 max-[375px]:truncate">{member.user_email}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -109,6 +132,14 @@ const TeamMembers: React.FC = () => {
                     </Card>
                 </div>
             </div>
+            <MemberDetailsDialog isDialogOpen={isMemberDialogOpen}
+                setIsDialogOpen={setIsMemberDialogOpen}
+                avatarImg={memberInfo?.avatarImg}
+                id={memberInfo?.id}
+                memberEmail={memberInfo?.memberEmail}
+                memberName={memberInfo?.memberName}
+                role={memberInfo?.role}
+            />
         </>
     )
 }

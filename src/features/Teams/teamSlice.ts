@@ -22,11 +22,16 @@ export const teamSlice = createSlice({
         },
         addAllTeams: (state, action: PayloadAction<TeamsInterface[]>) => {
             state.allTeams = action.payload;
+        },
+        updateTeam: (state, action: PayloadAction<string>) => {
+            if (state.currentTeam) {
+                state.currentTeam.members = state.currentTeam?.members.filter(memberInfo => memberInfo.id != action.payload);
+            }
         }
     }
 });
 
-export const { addTeam, addAllTeams } = teamSlice.actions;
+export const { addTeam, addAllTeams, updateTeam } = teamSlice.actions;
 
 export const selectTeam = (state: RootState) => { state.team.currentTeam };
 
