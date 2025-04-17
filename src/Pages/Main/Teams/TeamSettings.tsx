@@ -43,6 +43,7 @@ const TeamSettings: React.FC = () => {
     const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null);
     const [isMemberDialogOpen, setIsMemberDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
     const teamData = useAppSelector((state) => state.team.currentTeam);
     const dispatch = useAppDispatch();
 
@@ -107,8 +108,10 @@ const TeamSettings: React.FC = () => {
                 };
                 dispatch(updateTeamInfo(updatedInfo));
                 setLoading(false);
+                setError('');
             }
         } catch (error) {
+            setError("Error in update team info");
             setLoading(false);
             console.error(error);
         }
@@ -130,11 +133,11 @@ const TeamSettings: React.FC = () => {
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="team-name" className='font-noto text-base font-normal'>Team Name</Label>
-                                    <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder='Enter New Team Name' id='team-name' className='font-noto text-base font-normal' />
+                                    <Input value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder='Enter New Team Name' id='team-name' className='font-noto text-base font-normal max-[425px]:text-sm' />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="team-description" className='font-noto text-base font-normal'>Description</Label>
-                                    <Textarea value={teamDesc} onChange={(e) => setTeamDesc(e.target.value)} placeholder='hehe' id="team-description" className='font-noto text-base font-normal' />
+                                    <Textarea value={teamDesc} onChange={(e) => setTeamDesc(e.target.value)} placeholder='hehe' id="team-description" className='font-noto text-base font-normal max-[425px]:text-sm' />
                                 </div>
                             </CardContent>
                             <CardFooter>
@@ -143,6 +146,7 @@ const TeamSettings: React.FC = () => {
                                         <Loader color='text-slate-100' />
                                     ) : "Save Changes"}
                                 </Button>
+                                {error && <p className='font-noto text-start font-normal text-base text-red-500 my-4'>{error}</p>}
                             </CardFooter>
                         </Card>
 
