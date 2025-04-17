@@ -214,24 +214,6 @@ const TeamSettings: React.FC = () => {
                                 </div>
                             </CardContent>
                         </Card>
-
-                        <Card className="border-destructive">
-                            <CardHeader>
-                                <CardTitle className="text-destructive font-noto text-lg font-medium text-start">Danger Zone</CardTitle>
-                                <CardDescription className='font-noto text-base font-normal text-start'>Irreversible and destructive actions.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div>
-                                    <h3 className="text-lg font-noto font-medium">Delete Team</h3>
-                                    <p className="text-sm font-noto text-muted-foreground">
-                                        Permanently delete this team and all of its data. This action cannot be undone.
-                                    </p>
-                                </div>
-                            </CardContent>
-                            <CardFooter>
-                                <Button variant="destructive" className='text-sm font-noto font-normal'>Delete Team</Button>
-                            </CardFooter>
-                        </Card>
                     </div>
                 </div>
             </div>

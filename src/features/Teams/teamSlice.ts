@@ -49,11 +49,19 @@ export const teamSlice = createSlice({
             if (state.allTeams) {
                 state.allTeams = updatedTeams;
             }
+        },
+        deleteTeam: (state, action: PayloadAction<string>) => {
+            if (state.allTeams) {
+                state.allTeams = state.allTeams.filter(team => team.id != action.payload);
+            }
+            if (state.currentTeam) {
+                state.currentTeam = null;
+            }
         }
     }
 });
 
-export const { addTeam, addAllTeams, updateTeam, updateTeamInfo } = teamSlice.actions;
+export const { addTeam, addAllTeams, updateTeam, updateTeamInfo, deleteTeam } = teamSlice.actions;
 
 export const selectTeam = (state: RootState) => { state.team.currentTeam };
 
