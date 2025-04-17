@@ -7,7 +7,7 @@ import AllTodos from './Pages/Main/AllTodos';
 import TodoAnalytics from './Pages/Main/TodoAnalytics';
 import Teams from './Pages/Main/Teams/Teams';
 import TeamDashboard from './Pages/Main/Teams/TeamDashboard';
-import TeamMembers from './Pages/Main/Teams/TeamMembers';
+import TeamSettings from './Pages/Main/Teams/TeamSettings';
 import TeamTodos from './Pages/Main/Teams/TeamTodos';
 import Profile from './Pages/Main/Profile';
 import ProtectedRoutes from './ProtectedRoutes';
@@ -27,7 +27,7 @@ const AppRouter = () => {
                         <Route path='analytics' element={<TodoAnalytics />} />
                         <Route path='teams' element={<Teams />} />
                         <Route path='teams/team_dashboard/:team_id' element={<TeamDashboard />} />
-                        <Route path='teams/team_dashboard/:team_id/members' element={<TeamMembers />} />
+                        <Route path='teams/team_dashboard/:team_id/settings' element={<TeamSettings />} />
                         <Route path='teams/team_dashboard/:team_id/:list_id/todos' element={<TeamTodos />} />
                         <Route path='profile' element={<Profile />} />
                     </Route>

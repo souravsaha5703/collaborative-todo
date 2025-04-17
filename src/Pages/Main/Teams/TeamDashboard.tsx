@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Sidebar from '../../../components/NavigationBars/Sidebar';
 import { Card } from "@/components/ui/card";
-import { Settings, Users, PlusCircle, MoreVertical } from "lucide-react";
+import { Settings, PlusCircle, MoreVertical } from "lucide-react";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/redux-hooks';
 import CreateListDialog from '../../../components/DialogBoxes/CreateListDialog';
@@ -52,9 +52,10 @@ const TeamDashboard: React.FC = () => {
         setIsCreateListDialogBoxOpen(true);
     }
 
-    const handleMembersBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleSettingsBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        navigate(`/user/teams/team_dashboard/${team_id}/members`);
+        console.log("hehe");
+        navigate(`/user/teams/team_dashboard/${team_id}/settings`);
     }
 
     return (
@@ -86,13 +87,7 @@ const TeamDashboard: React.FC = () => {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem className="cursor-pointer">
-                                            <Button onClick={handleMembersBtn} variant="ghost" size="lg">
-                                                <Users className="mr-2 h-4 w-4" />
-                                                <span className='font-noto text-base font-medium'>Members</span>
-                                            </Button>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem className="cursor-pointer">
-                                            <Button variant="ghost" size="lg">
+                                            <Button onClick={handleSettingsBtn} variant="ghost" size="lg">
                                                 <Settings className="mr-2 h-4 w-4" />
                                                 <span className='font-noto text-base font-medium'>Settings</span>
                                             </Button>
@@ -100,12 +95,8 @@ const TeamDashboard: React.FC = () => {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             ) : (
-                                <div className="flex items-center gap-2">
-                                    <Button onClick={handleMembersBtn} variant="outline" size="lg">
-                                        <Users className="mr-2 h-4 w-4" />
-                                        <span className='font-noto text-base font-medium'>Members</span>
-                                    </Button>
-                                    <Button variant="outline" size="lg">
+                                <div className="flex items-center">
+                                    <Button onClick={handleSettingsBtn} variant="outline" size="lg">
                                         <Settings className="mr-2 h-4 w-4" />
                                         <span className='font-noto text-base font-medium'>Settings</span>
                                     </Button>
