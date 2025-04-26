@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Trash, Pencil } from "lucide-react";
 import { useAppSelector, useAppDispatch } from '@/hooks/redux-hooks';
 import { updateTeamInfo } from '@/features/Teams/teamSlice';
 import { toast } from '@/hooks/use-toast';
 import MemberDetailsDialog from '@/components/DialogBoxes/MemberDetailsDialog';
 import { database } from '@/Appwrite/appwriteConfig';
 import Loader from '@/components/Loaders/Loader';
+import EditListDialog from '@/components/DialogBoxes/EditListDialog';
 
 interface MemberInfo {
     id: string;
@@ -42,9 +43,13 @@ const TeamSettings: React.FC = () => {
     const [isCopied, setIsCopied] = useState(false);
     const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null);
     const [isMemberDialogOpen, setIsMemberDialogOpen] = useState<boolean>(false);
+    const [isEditListDialogOpen, setIsEditListDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [selectedListId, setSelectedListId] = useState<string>('');
+    const [selectedListName, setSelectedListName] = useState<string>('');
     const teamData = useAppSelector((state) => state.team.currentTeam);
+    const listData = useAppSelector((state) => state.list.lists);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -76,6 +81,13 @@ const TeamSettings: React.FC = () => {
                 });
             });
     };
+
+    const handleEditList = (e: React.MouseEvent<HTMLButtonElement>, listId: string, listName: string) => {
+        e.preventDefault();
+        setSelectedListId(listId);
+        setSelectedListName(listName);
+        setIsEditListDialogOpen(true);
+    }
 
     const handleMemberDialog = (id: string, memberName: string, memberEmail: string, role: string, avatarImg: string | undefined) => {
         setMemberInfo((prev) => ({
@@ -180,13 +192,34 @@ const TeamSettings: React.FC = () => {
 
                         <Card>
                             <CardHeader>
+                                <CardTitle className='font-noto text-xl max-[487px]:text-base'>Team Lists</CardTitle>
+                                <CardDescription className='font-noto text-base max-[487px]:text-sm'>Your team has {listData.length} lists.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    {listData.map((list) => (
+                                        <div key={list.id} className="flex items-center justify-between gap-4">
+                                            <div className="flex items-center gap-4 max-[425px]:gap-2">
+                                                <div>
+                                                    <p className="font-medium font-noto cursor-pointer max-[487px]:text-sm max-[375px]:w-28 max-[375px]:truncate">{list.list_name}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Button onClick={(e) => handleEditList(e, list.id, list.list_name)} variant={'outline'} size={'icon'}><Pencil /></Button>
+                                                <Button variant={'outline'} size={'icon'}><Trash /></Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardHeader>
                                 <CardTitle className='font-noto text-xl max-[487px]:text-base'>Team Members</CardTitle>
                                 <CardDescription className='font-noto text-base max-[487px]:text-sm'>Your team has {teamData?.members.length} members.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className='space-y-4'>
-
-                                </div>
                                 <div className="space-y-4">
                                     {teamData?.members.map((member) => (
                                         <div key={member.id} className="flex items-center justify-between gap-4">
@@ -224,6 +257,12 @@ const TeamSettings: React.FC = () => {
                 memberEmail={memberInfo?.memberEmail}
                 memberName={memberInfo?.memberName}
                 role={memberInfo?.role}
+            />
+            <EditListDialog
+                isDialogOpen={isEditListDialogOpen}
+                setIsDialogOpen={setIsEditListDialogOpen}
+                id={selectedListId}
+                name={selectedListName}
             />
         </>
     )
