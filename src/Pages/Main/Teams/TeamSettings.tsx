@@ -23,6 +23,7 @@ import { database } from '@/Appwrite/appwriteConfig';
 import Loader from '@/components/Loaders/Loader';
 import EditListDialog from '@/components/DialogBoxes/EditListDialog';
 import DeleteListDialog from '@/components/DialogBoxes/DeleteListDialog';
+import DeleteTeamDialog from '@/components/DialogBoxes/DeleteTeamDialog';
 
 interface MemberInfo {
     id: string;
@@ -46,6 +47,7 @@ const TeamSettings: React.FC = () => {
     const [isMemberDialogOpen, setIsMemberDialogOpen] = useState<boolean>(false);
     const [isEditListDialogOpen, setIsEditListDialogOpen] = useState<boolean>(false);
     const [isDeleteListDialogOpen, setIsDeleteListDialogOpen] = useState<boolean>(false);
+    const [isDeleteTeamDialogOpen, setIsDeleteTeamDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [selectedListId, setSelectedListId] = useState<string>('');
@@ -135,6 +137,10 @@ const TeamSettings: React.FC = () => {
             setLoading(false);
             console.error(error);
         }
+    }
+
+    const deleteTeamBtn = () => {
+        setIsDeleteTeamDialogOpen(true);
     }
 
     return (
@@ -255,6 +261,24 @@ const TeamSettings: React.FC = () => {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        <Card className="border-destructive">
+                            <CardHeader>
+                                <CardTitle className="text-destructive font-noto">Danger Zone</CardTitle>
+                                <CardDescription className='font-noto'>Irreversible and destructive actions.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <h3 className="text-lg font-noto font-medium">Delete Team</h3>
+                                    <p className="text-sm font-noto text-muted-foreground">
+                                        Permanently delete this team and all of its data. This action cannot be undone.
+                                    </p>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button onClick={deleteTeamBtn} variant="destructive" className='font-noto text-base'>Delete Team</Button>
+                            </CardFooter>
+                        </Card>
                     </div>
                 </div>
             </div>
@@ -276,6 +300,11 @@ const TeamSettings: React.FC = () => {
                 isDialogOpen={isDeleteListDialogOpen}
                 setIsDialogOpen={setIsDeleteListDialogOpen}
                 id={selectedListId}
+            />
+            <DeleteTeamDialog
+                isDialogOpen={isDeleteTeamDialogOpen}
+                setIsDialogOpen={setIsDeleteTeamDialogOpen}
+                id={teamData?.id}
             />
         </>
     )

@@ -40,11 +40,14 @@ export const listSlice = createSlice({
         deleteList: (state, action: PayloadAction<string>) => {
             const updatedLists = state.lists.filter(list => list.id != action.payload);
             state.lists = updatedLists;
+        },
+        deleteAllList: (state) => {
+            state.lists = [];
         }
     }
 });
 
-export const { addAllList, addList, updateList, deleteList } = listSlice.actions;
+export const { addAllList, addList, updateList, deleteList, deleteAllList } = listSlice.actions;
 
 export const selectList = (state: RootState) => { state.list.lists };
 
