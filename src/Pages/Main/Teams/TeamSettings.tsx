@@ -22,6 +22,7 @@ import MemberDetailsDialog from '@/components/DialogBoxes/MemberDetailsDialog';
 import { database } from '@/Appwrite/appwriteConfig';
 import Loader from '@/components/Loaders/Loader';
 import EditListDialog from '@/components/DialogBoxes/EditListDialog';
+import DeleteListDialog from '@/components/DialogBoxes/DeleteListDialog';
 
 interface MemberInfo {
     id: string;
@@ -44,6 +45,7 @@ const TeamSettings: React.FC = () => {
     const [memberInfo, setMemberInfo] = useState<MemberInfo | null>(null);
     const [isMemberDialogOpen, setIsMemberDialogOpen] = useState<boolean>(false);
     const [isEditListDialogOpen, setIsEditListDialogOpen] = useState<boolean>(false);
+    const [isDeleteListDialogOpen, setIsDeleteListDialogOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [selectedListId, setSelectedListId] = useState<string>('');
@@ -87,6 +89,12 @@ const TeamSettings: React.FC = () => {
         setSelectedListId(listId);
         setSelectedListName(listName);
         setIsEditListDialogOpen(true);
+    }
+
+    const handleDeleteList = (e: React.MouseEvent<HTMLButtonElement>, listId: string) => {
+        e.preventDefault();
+        setSelectedListId(listId);
+        setIsDeleteListDialogOpen(true);
     }
 
     const handleMemberDialog = (id: string, memberName: string, memberEmail: string, role: string, avatarImg: string | undefined) => {
@@ -206,7 +214,7 @@ const TeamSettings: React.FC = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Button onClick={(e) => handleEditList(e, list.id, list.list_name)} variant={'outline'} size={'icon'}><Pencil /></Button>
-                                                <Button variant={'outline'} size={'icon'}><Trash /></Button>
+                                                <Button onClick={(e) => handleDeleteList(e, list.id)} variant={'outline'} size={'icon'}><Trash /></Button>
                                             </div>
                                         </div>
                                     ))}
@@ -263,6 +271,11 @@ const TeamSettings: React.FC = () => {
                 setIsDialogOpen={setIsEditListDialogOpen}
                 id={selectedListId}
                 name={selectedListName}
+            />
+            <DeleteListDialog
+                isDialogOpen={isDeleteListDialogOpen}
+                setIsDialogOpen={setIsDeleteListDialogOpen}
+                id={selectedListId}
             />
         </>
     )

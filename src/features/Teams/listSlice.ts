@@ -36,11 +36,15 @@ export const listSlice = createSlice({
                 );
                 state.lists = updatedInfo;
             }
+        },
+        deleteList: (state, action: PayloadAction<string>) => {
+            const updatedLists = state.lists.filter(list => list.id != action.payload);
+            state.lists = updatedLists;
         }
     }
 });
 
-export const { addAllList, addList, updateList } = listSlice.actions;
+export const { addAllList, addList, updateList, deleteList } = listSlice.actions;
 
 export const selectList = (state: RootState) => { state.list.lists };
 
