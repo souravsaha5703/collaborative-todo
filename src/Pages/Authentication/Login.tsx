@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +17,10 @@ import AlertDialog from '@/components/DialogBoxes/AlertDialog';
 import { AlertDialogError } from '@/utils/AppInterfaces';
 import { account } from '@/Appwrite/appwriteConfig';
 import useCheckUser from '@/hooks/useCheckUser';
+import useAuth from '@/hooks/useAuth';
+import { useAppDispatch } from '@/hooks/redux-hooks';
+import { addUser, userStatus } from "@/features/Auth/authSlice";
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -27,6 +31,17 @@ const Login: React.FC = () => {
   const [formatError, setFormatError] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const { userExists, id } = useCheckUser(email);
+  const { user } = useAuth();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user != null) {
+      dispatch(addUser(user));
+      dispatch(userStatus(true));
+      navigate('/user/dashboard');
+    }
+  }, [user]);
 
   const handleLoginBtn = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
