@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/NavigationBars/Navbar';
@@ -8,8 +8,60 @@ import ShimmerButton from "@/components/ui/shimmer-button";
 import { TextAnimate } from "@/components/ui/text-animate";
 import FeatureCards from '@/components/FeatureCards/FeatureCards';
 import { features } from '@/utils/featureCardsContent';
+import { account, database } from '@/Appwrite/appwriteConfig';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from "../../hooks/redux-hooks";
+import { addUser, userStatus } from "@/features/Auth/authSlice";
+import Loader from '@/components/Loaders/Loader';
 
 const Page: React.FC = () => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const handleGuestSessionCreation = async () => {
+        try {
+            await account.createEmailPasswordSession(
+                import.meta.env.VITE_APPWRITE_EMAIl,
+                import.meta.env.VITE_APPWRITE_PASS
+            ).then(async (res) => {
+                const response = await database.getDocument(
+                    import.meta.env.VITE_APPWRITE_TODO_DB_ID,
+                    import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID,
+                    res.userId
+                );
+
+                dispatch(addUser({
+                    id: response.$id,
+                    fullname: response.fullname,
+                    status: response.status,
+                    email: response.email,
+                    emailVerification: response.emailVerification
+                }));
+                dispatch(userStatus(true));
+
+                setLoading(false);
+                navigate('/user/dashboard');
+
+            }).catch((error: unknown) => {
+                dispatch(addUser(null));
+                dispatch(userStatus(false));
+                setLoading(false);
+                console.error(error);
+                alert("Failed in creating guest account");
+            })
+        } catch (error: unknown) {
+            dispatch(addUser(null));
+            dispatch(userStatus(false));
+            setLoading(false);
+            console.error(error);
+            alert("Something went wrong please try again later :)");
+        }
+    }
+
+    const gotoLoginBtn = () => {
+        navigate('/login');
+    }
     return (
         <>
             <Navbar />
@@ -36,7 +88,11 @@ const Page: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.6 }}
                     >
-                        <Button size="lg" className='w-48 h-12 rounded-xl text-xl font-noto font-normal text-center max-[375px]:w-40 max-[375px]:text-lg'>Get Started</Button>
+                        <Button onClick={handleGuestSessionCreation} size="lg" className='w-48 h-12 rounded-xl text-xl font-noto font-normal text-center max-[375px]:w-40 max-[375px]:text-lg'>
+                            {loading ? (
+                                <Loader />
+                            ) : "Try as a Guest"}
+                        </Button>
                     </motion.div>
                 </div>
                 <AnimatedGridPattern
@@ -77,7 +133,7 @@ const Page: React.FC = () => {
                     <TextAnimate animation="slideUp" by="word" className='text-xl font-noto font-normal text-center text-slate-700 dark:text-slate-300 max-[375px]:text-base'>
                         Join us write now to transform your daily routines with SyncTasks.
                     </TextAnimate>
-                    <ShimmerButton className="shadow-2xl">
+                    <ShimmerButton onClick={gotoLoginBtn} className="shadow-2xl">
                         <span className="whitespace-pre-wrap font-noto text-center text-sm font-medium text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
                             Start Your Routine
                         </span>
