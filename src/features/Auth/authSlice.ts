@@ -18,15 +18,19 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         addUser: (state, action: PayloadAction<User | null>) => {
-            state.currentUser = action.payload
+            state.currentUser = action.payload;
         },
         userStatus: (state, action: PayloadAction<boolean>) => {
-            state.status = action.payload
+            state.status = action.payload;
+        },
+        deleteUser: (state) => {
+            state.currentUser = null;
+            state.status = false;
         }
     },
 })
 
-export const { addUser, userStatus } = authSlice.actions;
+export const { addUser, userStatus, deleteUser } = authSlice.actions;
 
 export const selectUser = (state: RootState) => { state.user.currentUser, state.user.status };
 
