@@ -57,7 +57,7 @@ const TodoAnalytics: React.FC = () => {
         sumOfTime = sumOfTime + time;
     });
 
-    const avgCompletionTime: string = ((sumOfTime / completedTasks.length) / (1000 * 60 * 60 * 24)).toFixed(0);
+    const avgCompletionTime: string = completedTasks.length === 0 ? "0" : ((sumOfTime / completedTasks.length) / (1000 * 60 * 60 * 24)).toFixed(0);
 
     const onTimeCompletedTasks = completedTasks.filter(task => {
         let taskCompletionTime: Date = new Date(task.completion_date);
@@ -153,7 +153,7 @@ const TodoAnalytics: React.FC = () => {
                     </ChartContainer>
                     <h1 className='font-noto text-3xl font-medium text-start text-gray-900 dark:text-gray-200 max-[425px]:text-2xl'>Your Productivity Score</h1>
                     <div className='w-full p-5 flex gap-14 mb-10 max-[862px]:flex-col max-[600px]:gap-8 max-[461px]:p-2'>
-                        <CircularScoreRing score={productivityScore} />
+                        <CircularScoreRing score={safeNumber(productivityScore)} />
                         <div className='flex flex-col gap-1 p-5 max-[461px]:p-2'>
                             <h1 className='font-noto text-xl font-medium text-start text-gray-900 dark:text-gray-200 max-[532px]:text-base'>Productivity Score measures on the basis of following Parameters :-</h1>
                             <div className='flex gap-10 max-[532px]:gap-2'>
