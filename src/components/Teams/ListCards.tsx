@@ -9,10 +9,9 @@ interface ListCardProps {
     id: string;
     list_name: string;
     team_id: string;
-    createdBy: string;
 }
 
-const ListCards: React.FC<ListCardProps> = ({ id, list_name, team_id, createdBy }) => {
+const ListCards: React.FC<ListCardProps> = ({ id, list_name, team_id }) => {
     const [totalTasks, setTotalTasks] = useState<number>(0);
     const [completedTasks, setCompletedTasks] = useState<number>(0);
     const navigate = useNavigate();
