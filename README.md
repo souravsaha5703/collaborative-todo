@@ -25,4 +25,4 @@ SyncTasks is a web-based to-do application designed for efficient task managemen
 ## 🔗 Links
 [![Website Link](https://img.shields.io/badge/Website%20Link-020617)](https://collaborative-todo-mauve.vercel.app/)
 
-If you have any feedback or suggestion reach me out to [![Static Badge](https://img.shields.io/badge/Twitter)]( https://x.com/exoticSourav03)
+If you have any feedback or suggestion reach me out to [![Twitter](https://img.shields.io/badge/Twitter)]( https://x.com/exoticSourav03)
