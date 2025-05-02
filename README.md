@@ -1,50 +1,28 @@
-# React + TypeScript + Vite
+# SyncTasks
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SyncTasks is a web-based to-do application designed for efficient task management, smart analytics, and seamless team collaboration. It helps users stay organized, track progress, and work together to get things done.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Task Management
+- Seamlessly manage all your tasks
 
-## Expanding the ESLint configuration
+2. Task Analytics Dashboard
+- Track your monthly progress
+- Track your productivity with productivity score
+- Track your performance with real time task analytics
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+3. Team collaboration
+- Collaborate on tasks together by joining or creating teams
+- Manage team tasks and team members
 
-- Configure the top-level `parserOptions` property like this:
+## Tech Stack
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+**client:** ReactJs, Tailwind CSS
+**Backend:** Appwrite
+**Libraries:** Shadcn, Framer Motion, React-Redux, Recharts
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 🔗 Links
+[![Website Link](https://img.shields.io/badge/Website%20Link-020617)](https://collaborative-todo-mauve.vercel.app/)
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+If you have any feedback or suggestion reach me out to [![Static Badge](https://img.shields.io/badge/Twitter)]( https://x.com/exoticSourav03)
