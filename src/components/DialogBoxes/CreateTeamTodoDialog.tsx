@@ -29,6 +29,7 @@ import { database } from '@/Appwrite/appwriteConfig';
 import { ID } from 'appwrite';
 import Loader from '../Loaders/Loader';
 import { addTodo } from '@/features/Teams/teamTodoSlice';
+import { formatToIndianTime } from '@/utils/dateFormatter';
 
 interface TodoDialogProps {
     isDialogOpen: boolean;
@@ -80,7 +81,7 @@ const CreateTeamTodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDi
                     dispatch(addTodo({
                         assigned_to: {
                             id: createTeamTodo.assigned_to.$id,
-                            joined_at: createTeamTodo.assigned_to.joined_at,
+                            joined_at: formatToIndianTime(createTeamTodo.assigned_to.joined_at),
                             role: createTeamTodo.assigned_to.role,
                             team_id: createTeamTodo.assigned_to.team_id,
                             user_email: createTeamTodo.assigned_to.user_id.email,
@@ -98,7 +99,7 @@ const CreateTeamTodoDialog: React.FC<TodoDialogProps> = ({ isDialogOpen, setIsDi
                         },
                         priority: createTeamTodo.priority,
                         task: createTeamTodo.task,
-                        task_due_date: createTeamTodo.task_due_date,
+                        task_due_date: formatToIndianTime(createTeamTodo.task_due_date),
                         task_status: createTeamTodo.task_status
                     }));
                     setTask('');
