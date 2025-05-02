@@ -1,0 +1,37 @@
+{
+    "name": "SyncTasks",
+    "short_name": "SyncTasks",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "web images/maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "web images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "web images/icon-256",
+            "sizes": "256x256",
+            "type": "image/png"
+        },
+        {
+            "src": "web images/icon-384",
+            "sizes": "384x384",
+            "type": "image/png"
+        },
+        {
+            "src": "web images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#f97316",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}
