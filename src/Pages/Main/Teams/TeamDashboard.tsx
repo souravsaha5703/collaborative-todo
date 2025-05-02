@@ -130,7 +130,6 @@ const TeamDashboard: React.FC = () => {
                                             id={list.id}
                                             list_name={list.list_name}
                                             team_id={list.team_id}
-                                            createdBy={list.createdBy}
                                         />
                                     )
                                 })}
